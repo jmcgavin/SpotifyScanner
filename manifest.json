@@ -1,0 +1,22 @@
+{
+  "name": "SpotifyScanner",
+  "short_name": "SpotifyScanner",
+  "description": "",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#353541",
+  "background_color": "#353541",
+  "icons": [
+    {
+      "src": "images/manifest/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/manifest/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "version": "local"
+}

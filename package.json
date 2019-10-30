@@ -1,0 +1,34 @@
+{
+  "name": "spotify-scanner",
+  "version": "0.0.0",
+  "author": "Jordan McGavin",
+  "description": "Scan your local audio files and add them to Spotify.",
+  "license": "ISC",
+  "repository": "",
+  "scripts": {
+    "start": "es-dev-server --app-index index.html --node-resolve --watch --open",
+    "build": "polymer build",
+    "serve": "polymer serve build/es5-bundled",
+    "lint": "standard | snazzy",
+    "lint:fix": "standard --fix"
+  },
+  "dependencies": {
+    "@material/mwc-button": "^0.10.0",
+    "@webcomponents/webcomponentsjs": "^2.2.4",
+    "lit-element": "^2.2.1",
+    "string-similarity": "^3.0.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "es-dev-server": "^1.18.5",
+    "polymer-cli": "^1.9.11",
+    "snazzy": "^8.0.0",
+    "standard": "^14.3.1"
+  },
+  "standard": {
+    "parser": "babel-eslint",
+    "env": {
+      "browser": true
+    }
+  }
+}
