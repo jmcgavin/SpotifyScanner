@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 
 import './ss-file-read'
-import '@material/mwc-button'
+import './ss-button'
 
 /**
  * Main description for the component goes here.
@@ -29,18 +29,7 @@ export class SSFileSelect extends LitElement {
       }
       /* Hide input element */
       input {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0,0,0,0);
-        border: 0;
-      }
-      mwc-button {
-        --mdc-theme-primary: var(--spotify-green);
-        --mdc-theme-on-primary: var(--app-light-text-color);
+        display: none;
       }
       `
     ]
@@ -63,15 +52,12 @@ export class SSFileSelect extends LitElement {
         type="file"
         accept="audio/*"
         multiple>
-        
-      <mwc-button
-        @click=${this._handleFileSelect}
-        label="Select files"
-        icon="attach_file"
-        id="fileSelectButton"
-        dense
-        raised>
-      </mwc-button>
+
+      <ss-button
+        .label=${'Select files'}
+        .icon=${'attach_file'}
+        @click=${this._handleFileSelect}>
+      </ss-button>
 
       ${this.selectedFilesAmount > 0 ? html`
         <ss-file-read

@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 
 import { generateRandomString, getHashParams } from '../../helpers/utils'
-import '@material/mwc-button'
+import './ss-button'
 
 /**
  * This is the app's login component. It fires a `login-approved` event once Spotify authorizes the user.
@@ -13,14 +13,7 @@ export class SSLogin extends LitElement {
     return [
       GlobalStyles,
       css`
-      mwc-button {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        --mdc-theme-primary: var(--spotify-green);
-        --mdc-theme-on-primary: var(--app-light-text-color));
-      }
+
       `
     ]
   }
@@ -32,13 +25,11 @@ export class SSLogin extends LitElement {
 
   render () {
     return html`
-      <mwc-button
-        @click=${this._login}
-        label="Log in with Spotify"
-        icon="person"
-        dense
-        raised>
-      </mwc-button>
+    <ss-button
+      .label=${'Log in with Spotify'}
+      .icon=${'person'}
+      @click=${this._login}>
+    </ss-button>
     `
   }
 

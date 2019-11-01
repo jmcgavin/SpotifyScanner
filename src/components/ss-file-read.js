@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 
-import { fileReader } from '../../helpers/files'
+import * as id3 from 'id3js'
 import '@material/mwc-button'
 
 /**
@@ -27,9 +27,9 @@ export class SSFileRead extends LitElement {
         height: fit-content;
         grid-template-rows: 1fr 1fr;
       }
-      #fileReadButton {
-        --mdc-theme-primary: var(--app-white);
-        --mdc-theme-on-primary: var(--spotify-green);
+      ss-button {
+        --background-color: var(--app-white);
+        --color: var(--spotify-green);
       }
       `
     ]
@@ -43,19 +43,25 @@ export class SSFileRead extends LitElement {
 
   render () {
     return html`
-      <mwc-button
-        @click=${this._readFiles}
-        label="Scan ${this.selectedFilesAmount} file${this.selectedFilesAmount > 1 ? 's' : ''}"
-        icon="cloud_select"
-        id="fileReadButton"
-        dense
-        raised>
-      </mwc-button>
+      <ss-button
+      .label=${`Scan ${this.selectedFilesAmount} file${this.selectedFilesAmount > 1 ? 's' : ''}`}
+      .icon=${'library_music'}
+      @click=${this._handleReadFilesClick}>
+    </ss-button>
     `
   }
 
-  _readFiles () {
-    console.log(this.selectedFiles)
+  _handleReadFilesClick () {
+    this._readFiles(this.selectedFiles[0])
+  }
+
+  async _readFiles () {
+    for (let i = 0; i < this.selectedFiles.length; i++) {
+      const file = this.selectedFiles[i]
+      const tags = await id3.fromFile(file)
+      console.log(tags)
+      return tags
+    }
   }
 }
 
