@@ -5,10 +5,11 @@ import { generateRandomString, getHashParams } from '../../helpers/utils'
 import './ss-button'
 
 /**
- * This is the app's login component. It fires a `login-approved` event once Spotify authorizes the user.
+ * This is the app's authentication component. It fires an
+ * `authentication-approved` event once the user grants authorization.
  * @extends LitElement
  */
-export class SSLogin extends LitElement {
+export class SSAuthenticate extends LitElement {
   static get styles () {
     return [
       GlobalStyles,
@@ -28,7 +29,7 @@ export class SSLogin extends LitElement {
     <ss-button
       .label=${'Log in with Spotify'}
       .icon=${'person'}
-      @click=${this._login}>
+      @click=${this._authenticate}>
     </ss-button>
     `
   }
@@ -37,7 +38,7 @@ export class SSLogin extends LitElement {
     this._verifySession()
   }
 
-  _login () {
+  _authenticate () {
     const clientId = 'bb4d5dbdf5714a15b1803f54d1a3c1e8' // Your client id
     const redirectUri = 'http://localhost:8000/callback' // Your redirect uri
     const scope = 'user-read-private playlist-modify-private'
@@ -63,14 +64,14 @@ export class SSLogin extends LitElement {
     const storedState = localStorage.getItem(this._stateKey)
 
     if (accessToken && (state === null || state !== storedState)) {
-      this._authenticationError = true
+      this.dispatchEvent(new CustomEvent('authentication-error'))
     } else {
       localStorage.removeItem(this._stateKey)
       if (accessToken) {
-        this.dispatchEvent(new CustomEvent('login-approved'))
+        this.dispatchEvent(new CustomEvent('authentication-approved'))
       }
     }
   }
 }
 
-window.customElements.define('ss-login', SSLogin)
+window.customElements.define('ss-authenticate', SSAuthenticate)

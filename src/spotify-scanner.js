@@ -2,9 +2,9 @@ import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from './styles/global-styles'
 
 import { githubRepo } from './components/github-repo'
+import './components/ss-authenticate'
 import './components/ss-file-select'
-import './components/ss-login'
-import '@material/mwc-button'
+import './components/ss-file-read'
 
 export class SpotifyScanner extends LitElement {
   static get properties () {
@@ -54,23 +54,30 @@ export class SpotifyScanner extends LitElement {
     return html`
       ${githubRepo}
       <div class="gridContainer">
-        ${!this.session ? this._renderLogin() : this._renderMain()}
+        ${!this.session ? this._renderAuthenticate() : this._renderFileSelect()}
       </div>
-      ${this._authenticationError ? html`${this._renderError()}` : ''}
+      ${this._authenticationError ? this._renderError() : ''}
     `
   }
 
-  _renderLogin () {
+  _renderAuthenticate () {
     return html`
-      <ss-login
-        @login-approved="${this.loginApproved}">
-      </ss-login>
+      <ss-authenticate
+        @authentication-error="${this._authenticationErrorHandler}"
+        @authentication-approved="${this._authenticationApprovedHandler}">
+      </ss-authenticate>
     `
   }
 
-  _renderMain () {
+  _renderFileSelect () {
     return html`
       <ss-file-select></ss-file-select>
+    `
+  }
+
+  _renderFileRead () {
+    return html`
+      <ss-file-read></ss-file-read>
     `
   }
 
@@ -82,8 +89,12 @@ export class SpotifyScanner extends LitElement {
     `
   }
 
-  loginApproved () {
+  _authenticationApprovedHandler () {
     this.session = true
+  }
+
+  _authenticationErrorHandler () {
+    this._authenticationError = true
   }
 }
 

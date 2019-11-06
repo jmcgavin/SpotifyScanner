@@ -27,7 +27,6 @@ export class SSFileSelect extends LitElement {
         height: fit-content;
         grid-template-rows: 1fr 1fr;
       }
-      /* Hide input element */
       input {
         display: none;
       }

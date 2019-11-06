@@ -8,14 +8,13 @@
   "scripts": {
     "start": "es-dev-server --app-index index.html --node-resolve --watch --open",
     "build": "polymer build",
-    "serve": "polymer serve build/es5-bundled",
+    "serve": "polymer serve build/es6-bundled",
     "lint": "standard | snazzy",
     "lint:fix": "standard --fix"
   },
   "dependencies": {
     "@material/button": "^3.2.0",
     "@webcomponents/webcomponentsjs": "^2.2.4",
-    "id3js": "^2.1.1",
     "lit-element": "^2.2.1",
     "string-similarity": "^3.0.0"
   },

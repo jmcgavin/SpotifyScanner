@@ -2,7 +2,6 @@ import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 
 import './ss-file-read'
-import '@material/mwc-button'
 import { style as materialButtonStyles } from '../styles/mdc-button-css'
 
 /**

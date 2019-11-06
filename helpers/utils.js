@@ -1,15 +1,15 @@
 /**
  * Generates a random string containing numbers and letters
- * @param  {number} The length of the string
+ * @param  {number} length The length of the string
  * @return {string} The generated string
  */
 export const generateRandomString = length => {
-  let text = ''
+  let randomString = ''
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   for (var i = 0; i < length; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length))
+    randomString += possible.charAt(Math.floor(Math.random() * possible.length))
   }
-  return text
+  return randomString
 }
 
 /**
@@ -25,4 +25,18 @@ export const getHashParams = () => {
     hashParams[e[1]] = decodeURIComponent(e[2])
   }
   return hashParams
+}
+
+/**
+ * Creates an array of arrays of a specified length
+ * @param  {array} array Array to be chunked
+ * @param  {number} chunkSize Chunk size
+ * @return {array} Chunked array
+ */
+export const chunkArray = (array, chunkSize) => {
+  var chunkedArray = []
+  for (var i = 0; i < array.length; i += chunkSize) {
+    chunkedArray.push(array.slice(i, i + chunkSize))
+  }
+  return chunkedArray
 }
