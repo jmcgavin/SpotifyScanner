@@ -4,13 +4,12 @@ import { GlobalStyles } from './styles/global-styles'
 import { githubRepo } from './components/github-repo'
 import './components/ss-authenticate'
 import './components/ss-file-select'
-import './components/ss-file-read'
 
 export class SpotifyScanner extends LitElement {
   static get properties () {
     return {
-      session: { type: Boolean },
-      _authenticationError: { type: Boolean }
+      _authenticationError: { type: Boolean },
+      session: { type: Boolean }
     }
   }
 
@@ -18,17 +17,6 @@ export class SpotifyScanner extends LitElement {
     return [
       GlobalStyles,
       css`
-      :host {
-        width: 100vw;
-        height: 100vh;
-      }
-      .gridContainer {
-        height: 100%;
-        width: 100%;
-        display: grid;
-        justify-content: center;
-        align-content: center;
-      }
       #authenticationError {
         position: absolute;
         display: grid;
@@ -46,16 +34,14 @@ export class SpotifyScanner extends LitElement {
 
   constructor () {
     super()
-    this.session = false
     this._authenticationError = false
+    this.session = false
   }
 
   render () {
     return html`
       ${githubRepo}
-      <div class="gridContainer">
-        ${!this.session ? this._renderAuthenticate() : this._renderFileSelect()}
-      </div>
+      ${!this.session ? this._renderAuthenticate() : this._renderFileSelect()}
       ${this._authenticationError ? this._renderError() : ''}
     `
   }
@@ -72,12 +58,6 @@ export class SpotifyScanner extends LitElement {
   _renderFileSelect () {
     return html`
       <ss-file-select></ss-file-select>
-    `
-  }
-
-  _renderFileRead () {
-    return html`
-      <ss-file-read></ss-file-read>
     `
   }
 

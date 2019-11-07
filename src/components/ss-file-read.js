@@ -12,7 +12,8 @@ export class SSFileRead extends LitElement {
   static get properties () {
     return {
       selectedFiles: { type: Object },
-      selectedFilesAmount: { type: Number }
+      selectedFilesAmount: { type: Number },
+      tracks: { type: Array }
     }
   }
 
@@ -22,9 +23,8 @@ export class SSFileRead extends LitElement {
       css`
       :host {
         display: grid;
-        width: fit-content;
+        width: auto;
         height: fit-content;
-        grid-template-rows: 1fr 1fr;
       }
       ss-button {
         --background-color: var(--app-white);
@@ -38,7 +38,7 @@ export class SSFileRead extends LitElement {
     super()
     this.selectedFiles = {}
     this.selectedFilesAmount = 0
-    this.jsmediatags = window.jsmediatags
+    this.tracks = []
   }
 
   render () {
@@ -52,18 +52,27 @@ export class SSFileRead extends LitElement {
   }
 
   _readFiles () {
-    console.time('_readFiles() duration')
-    for (let i = 0; i < this.selectedFiles.length; i++) {
-      this.jsmediatags.read(this.selectedFiles[i], {
+    const { selectedFiles, tracks } = this
+    // console.time('_readFiles() duration')
+    for (let i = 0; i < selectedFiles.length; i++) {
+      window.jsmediatags.read(selectedFiles[i], {
         onSuccess: file => {
-          console.log(`${i + 1}. ${file.tags.artist} - ${file.tags.title}`)
+          tracks.push({
+            id: i + 1,
+            title: file.tags.title || '',
+            artist: file.tags.artist || '',
+            album: file.tags.album || '',
+            year: file.tags.year || ''
+          })
+          tracks.sort((a, b) => a.id - b.id)
         },
         onError: error => {
           console.log(error)
         }
       })
     }
-    console.timeEnd('_readFiles() duration')
+    console.log(tracks)
+    // console.timeEnd('_readFiles() duration')
   }
 }
 

@@ -23,9 +23,8 @@ export class SSFileSelect extends LitElement {
       css`
       :host {
         display: grid;
-        width: fit-content;
+        width: auto;
         height: fit-content;
-        grid-template-rows: 1fr 1fr;
       }
       input {
         display: none;
