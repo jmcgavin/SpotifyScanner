@@ -9,7 +9,8 @@ export class SpotifyScanner extends LitElement {
   static get properties () {
     return {
       _authenticationError: { type: Boolean },
-      session: { type: Boolean }
+      session: { type: Boolean },
+      tracks: { type: Array }
     }
   }
 
@@ -17,6 +18,13 @@ export class SpotifyScanner extends LitElement {
     return [
       GlobalStyles,
       css`
+      ss-authenticate,
+      ss-file-select {
+        transform: translate(-50%, -50%);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+      }
       #authenticationError {
         position: absolute;
         display: grid;
@@ -36,6 +44,7 @@ export class SpotifyScanner extends LitElement {
     super()
     this._authenticationError = false
     this.session = false
+    this.tracks = []
   }
 
   render () {
@@ -57,7 +66,9 @@ export class SpotifyScanner extends LitElement {
 
   _renderFileSelect () {
     return html`
-      <ss-file-select></ss-file-select>
+      <ss-file-select
+        @tracks-selected="${this._filesSelectedHandler}">
+      </ss-file-select>
     `
   }
 
@@ -67,6 +78,10 @@ export class SpotifyScanner extends LitElement {
         An error occurred during the authentification process.
       </div>
     `
+  }
+
+  _filesSelectedHandler (e) {
+    this.tracks = e.detail
   }
 
   _authenticationApprovedHandler () {

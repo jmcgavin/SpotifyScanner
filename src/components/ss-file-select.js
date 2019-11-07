@@ -1,7 +1,6 @@
 import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 
-import './ss-file-read'
 import './ss-button'
 
 /**
@@ -12,8 +11,8 @@ import './ss-button'
 export class SSFileSelect extends LitElement {
   static get properties () {
     return {
-      selectedFilesAmount: { type: Number },
-      selectedFiles: { type: Object }
+      selectedFiles: { type: Object },
+      tracks: { type: Array }
     }
   }
 
@@ -21,11 +20,6 @@ export class SSFileSelect extends LitElement {
     return [
       GlobalStyles,
       css`
-      :host {
-        display: grid;
-        width: auto;
-        height: fit-content;
-      }
       input {
         display: none;
       }
@@ -40,29 +34,22 @@ export class SSFileSelect extends LitElement {
   constructor () {
     super()
     this.selectedFiles = {}
-    this.selectedFilesAmount = 0
+    this.tracks = []
   }
 
   render () {
     return html`
       <input
-        @change="${this._updateSelectedFiles}"
+        @change="${this._readFiles}"
         type="file"
         accept="audio/*"
         multiple>
 
       <ss-button
-        .label=${'Select files'}
-        .icon=${'attach_file'}
+        .label=${'Select files to scan'}
+        .icon=${'library_music'}
         @click=${this._handleFileSelect}>
       </ss-button>
-
-      ${this.selectedFilesAmount > 0 ? html`
-        <ss-file-read
-          .selectedFiles="${this.selectedFiles}"
-          .selectedFilesAmount="${this.selectedFilesAmount}">
-        </ss-file-read>
-      ` : ''}
     `
   }
 
@@ -70,9 +57,31 @@ export class SSFileSelect extends LitElement {
     this._fileSelectInput.click()
   }
 
-  _updateSelectedFiles () {
-    this.selectedFilesAmount = this._fileSelectInput.files.length
+  _readFiles () {
     this.selectedFiles = this._fileSelectInput.files
+    const { selectedFiles, tracks } = this
+    // console.time('_readFiles() duration')
+    for (let i = 0; i < selectedFiles.length; i++) {
+      window.jsmediatags.read(selectedFiles[i], {
+        onSuccess: file => {
+          tracks.push({
+            id: i + 1,
+            title: file.tags.title || '',
+            artist: file.tags.artist || '',
+            album: file.tags.album || '',
+            year: file.tags.year || ''
+          })
+          tracks.sort((a, b) => a.id - b.id)
+        },
+        onError: error => {
+          console.log(error)
+        }
+      })
+    }
+    this.dispatchEvent(new CustomEvent('tracks-selected', {
+      detail: tracks
+    }))
+    // console.timeEnd('_readFiles() duration')
   }
 }
 
