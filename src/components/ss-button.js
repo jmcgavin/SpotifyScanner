@@ -28,8 +28,8 @@ export class SSButton extends LitElement {
       materialButtonStyles,
       css`
         button {
-          --mdc-theme-primary: var(--background-color, var(--spotify-green));
-          --mdc-theme-on-primary: var(--color, var(--app-light-text-color));
+          --mdc-theme-primary: var(--background-color, var(--app-primary));
+          --mdc-theme-on-primary: var(--color, var(--app-light-text));
         }
       `
     ]
