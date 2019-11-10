@@ -11,7 +11,6 @@ import './ss-button'
 export class SSFileSelect extends LitElement {
   static get properties () {
     return {
-      selectedFiles: { type: Object },
       tracks: { type: Array }
     }
   }
@@ -20,9 +19,9 @@ export class SSFileSelect extends LitElement {
     return [
       GlobalStyles,
       css`
-      input {
-        display: none;
-      }
+        input {
+          display: none;
+        }
       `
     ]
   }
@@ -33,7 +32,6 @@ export class SSFileSelect extends LitElement {
 
   constructor () {
     super()
-    this.selectedFiles = {}
     this.tracks = []
   }
 
@@ -53,35 +51,39 @@ export class SSFileSelect extends LitElement {
     `
   }
 
-  _handleFileSelect () {
-    this._fileSelectInput.click()
+  _readFiles () {
+    const fileArray = Array.from(this._fileSelectInput.files)
+    const promises = fileArray.map((file, index) => {
+      return new Promise((resolve, reject) => {
+        window.jsmediatags.read(file, {
+          onSuccess: (fileTags) => {
+            this.tracks.push({
+              id: index + 1,
+              title: fileTags.tags.title || '',
+              artist: fileTags.tags.artist || '',
+              album: fileTags.tags.album || '',
+              year: fileTags.tags.year || ''
+            })
+            this.tracks.sort((a, b) => a.id - b.id)
+            resolve(fileTags)
+          },
+          onError: (error) => {
+            console.log('Error')
+            reject(error)
+          }
+        })
+      })
+    })
+
+    Promise.all(promises).then(() => {
+      this.dispatchEvent(new CustomEvent('tracks-selected', {
+        detail: this.tracks
+      }))
+    })
   }
 
-  _readFiles () {
-    this.selectedFiles = this._fileSelectInput.files
-    const { selectedFiles, tracks } = this
-    // console.time('_readFiles() duration')
-    for (let i = 0; i < selectedFiles.length; i++) {
-      window.jsmediatags.read(selectedFiles[i], {
-        onSuccess: file => {
-          tracks.push({
-            id: i + 1,
-            title: file.tags.title || '',
-            artist: file.tags.artist || '',
-            album: file.tags.album || '',
-            year: file.tags.year || ''
-          })
-          tracks.sort((a, b) => a.id - b.id)
-        },
-        onError: error => {
-          console.log(error)
-        }
-      })
-    }
-    this.dispatchEvent(new CustomEvent('tracks-selected', {
-      detail: tracks
-    }))
-    // console.timeEnd('_readFiles() duration')
+  _handleFileSelect () {
+    this._fileSelectInput.click()
   }
 }
 

@@ -32,6 +32,9 @@ export class SSFileManage extends LitElement {
 
   render () {
     return html`
+      <h1>${this.tracks[0].id}${this.tracks[0].title}</h1>
+      <h1>${this.tracks[1].id}${this.tracks[1].title}</h1>
+
       <ss-button
         .label=${'File manage button'}
         .icon=${'library_music'}>
