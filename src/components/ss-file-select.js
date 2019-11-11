@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 
+import './ss-table'
 import './ss-button'
 
 /**
@@ -11,6 +12,7 @@ import './ss-button'
 export class SSFileSelect extends LitElement {
   static get properties () {
     return {
+      tracksAreSelected: { type: Boolean },
       tracks: { type: Array }
     }
   }
@@ -22,6 +24,16 @@ export class SSFileSelect extends LitElement {
         input {
           display: none;
         }
+        #fileSelectButton {
+          --background-color: var(--app-blue);
+        }
+        #spotifySearchButton {
+          float: right;
+        }
+        ss-table {
+          margin-top: 16px;
+          display: flex;
+        }
       `
     ]
   }
@@ -30,8 +42,13 @@ export class SSFileSelect extends LitElement {
     return this.renderRoot.querySelector('input')
   }
 
+  get _table () {
+    return this.renderRoot.querySelector('ss-table')
+  }
+
   constructor () {
     super()
+    this.tracksAreSelected = false
     this.tracks = []
   }
 
@@ -44,14 +61,27 @@ export class SSFileSelect extends LitElement {
         multiple>
 
       <ss-button
-        .label=${'Select files to scan'}
+        .label=${'Select files'}
         .icon=${'library_music'}
-        @click=${this._handleFileSelect}>
+        @click=${this._handleFileSelect}
+        id="fileSelectButton">
       </ss-button>
+      <ss-button
+        ?disabled=${!this.tracksAreSelected}
+        .label=${'Search Spotify'}
+        .icon=${'search'}
+        id="spotifySearchButton">
+      </ss-button>
+
+      <ss-table
+        .tracks="${this.tracks}"
+        ?tracks-selected=${this.tracksAreSelected}>
+      </ss-table>
     `
   }
 
   _readFiles () {
+    this.tracks = []
     const fileArray = Array.from(this._fileSelectInput.files)
     const promises = fileArray.map((file, index) => {
       return new Promise((resolve, reject) => {
@@ -76,10 +106,22 @@ export class SSFileSelect extends LitElement {
     })
 
     Promise.all(promises).then(() => {
-      this.dispatchEvent(new CustomEvent('tracks-selected', {
-        detail: this.tracks
-      }))
+      // this.dispatchEvent(new CustomEvent('tracks-selected', {
+      //   detail: this.tracks
+      // }))
+      this._enableSearchButton()
+      // console.log(this.tracks)
     })
+  }
+
+  _updateSelectedTracks () {
+
+  }
+
+  _enableSearchButton () {
+    if (this.tracks.length) {
+      this.tracksAreSelected = true
+    }
   }
 
   _handleFileSelect () {

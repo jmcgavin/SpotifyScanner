@@ -4,15 +4,13 @@ import { GlobalStyles } from './styles/global-styles'
 import { githubRepo } from './components/github-repo'
 import './components/ss-authenticate'
 import './components/ss-file-select'
-import './components/ss-file-manage'
 
 export class SpotifyScanner extends LitElement {
   static get properties () {
     return {
       _authenticationError: { type: Boolean },
       session: { type: Boolean },
-      tracks: { type: Array },
-      tracksSeleced: { type: Boolean }
+      tracks: { type: Array }
     }
   }
 
@@ -20,24 +18,29 @@ export class SpotifyScanner extends LitElement {
     return [
       GlobalStyles,
       css`
-      ss-authenticate,
-      ss-file-select {
-        transform: translate(-50%, -50%);
-        position: absolute;
-        top: 50%;
-        left: 50%;
-      }
-      #authenticationError {
-        position: absolute;
-        display: grid;
-        align-items: center;
-        bottom: 0;
-        height: 60px;
-        width: 100%;
-        text-align: center;
-        color: var(--app-light-text);
-        background-color: var(--app-error);
-      }
+        ss-authenticate {
+          transform: translate(-50%, -50%);
+          position: absolute;
+          top: 50%;
+          left: 50%;
+        }
+        ss-file-select {
+          display: block;
+          width: 90%;
+          max-width: 1920px;
+          margin: 30vh auto 50px;
+        }
+        #authenticationError {
+          position: absolute;
+          display: grid;
+          align-items: center;
+          bottom: 0;
+          height: 60px;
+          width: 100%;
+          text-align: center;
+          color: var(--app-light-text);
+          background-color: var(--app-error);
+        }
       `
     ]
   }
@@ -53,11 +56,13 @@ export class SpotifyScanner extends LitElement {
     this.tracks = []
   }
 
+  // ${!this.session ? this._renderAuthenticate() : this._renderFileSelect()}
+  // or
+  // ${this._renderFileSelect()}
   render () {
     return html`
       ${githubRepo}
       ${!this.session ? this._renderAuthenticate() : this._renderFileSelect()}
-      ${this.tracksSeleced ? this._renderFileManage() : ''}
       ${this._authenticationError ? this._renderError() : ''}
     `
   }
@@ -79,15 +84,6 @@ export class SpotifyScanner extends LitElement {
     `
   }
 
-  _renderFileManage () {
-    this._fileSelector.style.display = 'none'
-    return html`
-      <ss-file-manage
-        .tracks="${this.tracks}">
-      </ss-file-manage>
-    `
-  }
-
   _renderError () {
     return html`
       <div id="authenticationError">
@@ -98,8 +94,6 @@ export class SpotifyScanner extends LitElement {
 
   _filesSelectedHandler (e) {
     this.tracks = e.detail
-    this.tracksSeleced = true
-    console.log(this.tracks)
   }
 
   _authenticationApprovedHandler () {

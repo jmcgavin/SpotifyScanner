@@ -9,6 +9,9 @@ export const GlobalStyles = css`
     --app-red: #F2545B;
     --app-blue: #30BCED;
 
+    --app-dark-border: var(--app-black);
+    --app-light-border: rgb(224, 224, 224);
+
     --app-primary: var(--app-green);
     --app-secondary: var(--app-pblue);
     --app-error: var(--app-red);
