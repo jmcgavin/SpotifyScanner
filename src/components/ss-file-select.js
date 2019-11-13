@@ -1,6 +1,8 @@
 import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 
+import * as Promise from 'bluebird'
+
 import './ss-table'
 import './ss-button'
 
@@ -21,18 +23,26 @@ export class SSFileSelect extends LitElement {
     return [
       GlobalStyles,
       css`
+        :host {
+          display: grid;
+          height: 100%;
+          width: 90%;
+          margin: 0 auto;
+          grid-template-rows: 20vh 70vh;
+          grid-gap: 16px;
+        }
         input {
           display: none;
         }
+        #buttonCon {
+          display: flex;
+        }
+        #buttonCon ss-button {
+          align-self: flex-end;
+        }
         #fileSelectButton {
           --background-color: var(--app-blue);
-        }
-        #spotifySearchButton {
-          float: right;
-        }
-        ss-table {
-          margin-top: 16px;
-          display: flex;
+          margin-right: 16px;
         }
       `
     ]
@@ -60,18 +70,20 @@ export class SSFileSelect extends LitElement {
         accept="audio/*"
         multiple>
 
-      <ss-button
-        .label=${'Select files'}
-        .icon=${'library_music'}
-        @click=${this._handleFileSelect}
-        id="fileSelectButton">
-      </ss-button>
-      <ss-button
-        ?disabled=${!this.tracksAreSelected}
-        .label=${'Search Spotify'}
-        .icon=${'search'}
-        id="spotifySearchButton">
-      </ss-button>
+      <div id="buttonCon">
+        <ss-button
+          .label=${'Select files'}
+          .icon=${'library_music'}
+          @click=${this._handleFileSelect}
+          id="fileSelectButton">
+        </ss-button>
+        <ss-button
+          ?disabled=${!this.tracksAreSelected}
+          .label=${'Search Spotify'}
+          .icon=${'search'}
+          id="spotifySearchButton">
+        </ss-button>
+      </div>
 
       <ss-table
         .tracks="${this.tracks}"
@@ -81,7 +93,6 @@ export class SSFileSelect extends LitElement {
   }
 
   _readFiles () {
-    this.tracks = []
     const fileArray = Array.from(this._fileSelectInput.files)
     const promises = fileArray.map((file, index) => {
       return new Promise((resolve, reject) => {

@@ -24,12 +24,6 @@ export class SpotifyScanner extends LitElement {
           top: 50%;
           left: 50%;
         }
-        ss-file-select {
-          display: block;
-          width: 90%;
-          max-width: 1920px;
-          margin: 30vh auto 50px;
-        }
         #authenticationError {
           position: absolute;
           display: grid;
@@ -62,7 +56,7 @@ export class SpotifyScanner extends LitElement {
   render () {
     return html`
       ${githubRepo}
-      ${!this.session ? this._renderAuthenticate() : this._renderFileSelect()}
+      ${this._renderFileSelect()}
       ${this._authenticationError ? this._renderError() : ''}
     `
   }

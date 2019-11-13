@@ -22,6 +22,7 @@ export class SSTable extends LitElement {
       css`
         table {
           width: 100%;
+          height: 100%;
           font-family: Roboto, sans-serif;
           font-size: 14px;
           text-align: left;
@@ -30,12 +31,17 @@ export class SSTable extends LitElement {
         }
 
         #noTracksSelected {
-          height: 50vh;
+          height: 100%;
+        }
+
+        thead {
+          position: sticky;
+          top: 0;
         }
 
         /* Row height */
         tr {
-          height: 56px;
+          height: 50px;
           box-sizing: border-box;
         }
 
@@ -54,22 +60,14 @@ export class SSTable extends LitElement {
           padding: 8px;
         }
 
-        /* Table bakground color */
-        table tr:first-child {
+        /* Table bakground color + border */
+        table thead tr {
           background-color: var(--app-green);
           color: var(--app-light-text);
         }
-        table tr:nth-child(even) {
-          background-color: rgba(255,255,255,0.96);
-        }
-        table tr:nth-child(n+3):nth-child(odd) {
-          background-color: rgba(255,255,255,0.91);
-        }
-
-        /* Table hover effect */
-        table tr:nth-child(even):hover,
-        table tr:nth-child(n+3):nth-child(odd):hover {
-          
+        table tr {
+          background-color: var(--app-white);
+          border-bottom: solid 1px var(--app-light-border);
         }
 
         /* Table border radius */
@@ -99,13 +97,15 @@ export class SSTable extends LitElement {
   render () {
     return html`
       <table>
-        <tr> <!-- table row -->
-          <th></th> <!-- table header cell -->
-          <th>Title</th>
-          <th>Artist</th>
-          <th>Album</th>
-          <th>Year</th>
-        </tr>
+        <thead> <!-- table header -->
+          <tr> <!-- table row -->
+            <th></th> <!-- table header cell -->
+            <th>Title</th>
+            <th>Artist</th>
+            <th>Album</th>
+            <th>Year</th>
+          </tr>
+        </thead>
 
         ${!this.tracksAreSelected ? html`
           <tr>

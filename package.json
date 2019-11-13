@@ -15,6 +15,7 @@
   "dependencies": {
     "@material/button": "^3.2.0",
     "@webcomponents/webcomponentsjs": "^2.2.4",
+    "bluebird": "^3.7.1",
     "lit-element": "^2.2.1",
     "string-similarity": "^3.0.0"
   },
