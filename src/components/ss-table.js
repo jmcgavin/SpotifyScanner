@@ -70,6 +70,10 @@ export class SSTable extends LitElement {
           border-bottom: solid 1px var(--app-light-border);
         }
 
+        table tr:last-child {
+          border: none;
+        }
+
         /* Table border radius */
         table tr:last-child td:first-child {
           border-bottom-left-radius: 4px;

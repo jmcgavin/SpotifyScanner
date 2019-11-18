@@ -1,8 +1,6 @@
 import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 
-import * as Promise from 'bluebird'
-
 import './ss-table'
 import './ss-button'
 
@@ -35,14 +33,25 @@ export class SSFileSelect extends LitElement {
           display: none;
         }
         #buttonCon {
-          display: flex;
+          display: grid;
+          grid-template-columns: max-content max-content auto;
         }
         #buttonCon ss-button {
-          align-self: flex-end;
+          align-self: end;
+          width: fit-content;
         }
         #fileSelectButton {
           --background-color: var(--app-blue);
           margin-right: 16px;
+        }
+        #buttonCon h2 {
+          font-family: Roboto, sans-serif;
+          font-size: 14px;
+          font-weight: normal;
+          align-self: end;
+          margin: 0;
+          justify-self: end;
+          color: var(--app-light-text);
         }
       `
     ]
@@ -83,6 +92,7 @@ export class SSFileSelect extends LitElement {
           .icon=${'search'}
           id="spotifySearchButton">
         </ss-button>
+        <h2>Total: ${this.tracks.length}</h2>
       </div>
 
       <ss-table
@@ -93,40 +103,36 @@ export class SSFileSelect extends LitElement {
   }
 
   _readFiles () {
-    const fileArray = Array.from(this._fileSelectInput.files)
-    const promises = fileArray.map((file, index) => {
-      return new Promise((resolve, reject) => {
-        window.jsmediatags.read(file, {
-          onSuccess: (fileTags) => {
-            this.tracks.push({
-              id: index + 1,
-              title: fileTags.tags.title || '',
-              artist: fileTags.tags.artist || '',
-              album: fileTags.tags.album || '',
-              year: fileTags.tags.year || ''
-            })
-            this.tracks.sort((a, b) => a.id - b.id)
-            resolve(fileTags)
-          },
-          onError: (error) => {
-            console.log('Error')
-            reject(error)
-          }
+    if (this._fileSelectInput.files.length) {
+      const fileArray = Array.from(this._fileSelectInput.files)
+
+      window.Promise.map(fileArray, file => {
+        return new Promise((resolve, reject) => {
+          window.jsmediatags.read(file, {
+            onSuccess: resolve,
+            onError: error => {
+              console.log(error.message)
+              reject(error)
+            }
+          })
         })
+      }, { concurrency: 5 }).then(tags => {
+        const results = tags.map((tag, index) => ({
+          id: index + 1,
+          title: tag.tags.title || undefined,
+          artist: tag.tags.artist || undefined,
+          album: tag.tags.album || undefined,
+          year: tag.tags.year || undefined
+        }))
+        this.tracks = results
+        this.dispatchEvent(new CustomEvent('tracks-selected', {
+          detail: this.tracks
+        }))
+        this._enableSearchButton()
+      }, error => {
+        console.log(error.message)
       })
-    })
-
-    Promise.all(promises).then(() => {
-      // this.dispatchEvent(new CustomEvent('tracks-selected', {
-      //   detail: this.tracks
-      // }))
-      this._enableSearchButton()
-      // console.log(this.tracks)
-    })
-  }
-
-  _updateSelectedTracks () {
-
+    }
   }
 
   _enableSearchButton () {
