@@ -88,6 +88,7 @@ export class SpotifyScanner extends LitElement {
 
   _filesSelectedHandler (e) {
     this.tracks = e.detail
+    console.timeEnd('_handleReadFiles timer')
   }
 
   _authenticationApprovedHandler () {

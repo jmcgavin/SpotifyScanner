@@ -22,16 +22,12 @@ export class SSTable extends LitElement {
       css`
         table {
           width: 100%;
-          height: 100%;
+          height: fit-content;
           font-family: Roboto, sans-serif;
           font-size: 14px;
           text-align: left;
           color: var(--app-dark-text);
           border-collapse: collapse;
-        }
-
-        #noTracksSelected {
-          height: 100%;
         }
 
         thead {
@@ -113,7 +109,7 @@ export class SSTable extends LitElement {
 
         ${!this.tracksAreSelected ? html`
           <tr>
-            <td id="noTracksSelected" colspan="5">No tracks selected</td>
+            <td colspan="5">No tracks selected</td> <!-- table data cell -->
           </tr>
         ` : ''}
         
