@@ -2,15 +2,15 @@ import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from './styles/global-styles'
 
 import { githubRepo } from './components/github-repo'
+import './components/ss-authenticate'
 import './components/ss-file-select'
-import './components/ss-login'
-import '@material/mwc-button'
 
 export class SpotifyScanner extends LitElement {
   static get properties () {
     return {
+      _authenticationError: { type: Boolean },
       session: { type: Boolean },
-      _authenticationError: { type: Boolean }
+      tracks: { type: Array }
     }
   }
 
@@ -18,59 +18,63 @@ export class SpotifyScanner extends LitElement {
     return [
       GlobalStyles,
       css`
-      :host {
-        width: 100vw;
-        height: 100vh;
-      }
-      .gridContainer {
-        height: 100%;
-        width: 100%;
-        display: grid;
-        justify-content: center;
-        align-content: center;
-      }
-      #authenticationError {
-        position: absolute;
-        display: grid;
-        align-items: center;
-        bottom: 0;
-        height: 60px;
-        width: 100%;
-        text-align: center;
-        color: var(--app-light-text-color);
-        background-color: var(--app-error);
-      }
+        ss-authenticate {
+          transform: translate(-50%, -50%);
+          position: absolute;
+          top: 50%;
+          left: 50%;
+        }
+        #authenticationError {
+          position: absolute;
+          display: grid;
+          align-items: center;
+          bottom: 0;
+          height: 60px;
+          width: 100%;
+          text-align: center;
+          color: var(--app-light-text);
+          background-color: var(--app-error);
+        }
       `
     ]
   }
 
-  constructor () {
-    super()
-    this.session = false
-    this._authenticationError = false
+  get _fileSelector () {
+    return this.renderRoot.querySelector('ss-file-select')
   }
 
+  constructor () {
+    super()
+    this._authenticationError = false
+    this.session = false
+    this.tracks = []
+  }
+
+  // ${!this.session ? this._renderAuthenticate() : this._renderFileSelect()}
+  // or
+  // ${this._renderFileSelect()}
   render () {
     return html`
       ${githubRepo}
-      <div class="gridContainer">
-        ${!this.session ? this._renderLogin() : this._renderMain()}
-      </div>
-      ${this._authenticationError ? html`${this._renderError()}` : ''}
+      ${this._renderFileSelect()}
+      ${this._authenticationError ? this._renderError() : ''}
     `
   }
 
-  _renderLogin () {
+  _renderAuthenticate () {
     return html`
-      <ss-login
-        @login-approved="${this.loginApproved}">
-      </ss-login>
+      <ss-authenticate
+        @authentication-error="${this._authenticationErrorHandler}"
+        @authentication-approved="${this._authenticationApprovedHandler}">
+      </ss-authenticate>
     `
   }
 
-  _renderMain () {
+  _renderFileSelect () {
     return html`
-      <ss-file-select></ss-file-select>
+      <ss-file-select
+        @tracks-selected="${this._filesSelectedHandler}">
+      </ss-file-select>
     `
   }
 
@@ -82,8 +86,17 @@ export class SpotifyScanner extends LitElement {
     `
   }
 
-  loginApproved () {
+  _filesSelectedHandler (e) {
+    this.tracks = e.detail
+    console.timeEnd('_handleReadFiles timer')
+  }
+
+  _authenticationApprovedHandler () {
     this.session = true
+  }
+
+  _authenticationErrorHandler () {
+    this._authenticationError = true
   }
 }
 

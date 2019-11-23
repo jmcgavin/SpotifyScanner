@@ -29,7 +29,7 @@
       }
       html, body, spotify-scanner {
         height: 100%;
-        background-color: #f6f8fa;
+        background-color: #202030;
       }
     </style>
   </head>
@@ -37,6 +37,12 @@
   <body>
     <spotify-scanner appTitle="SpotifyScanner"></spotify-scanner>
     <noscript>Please enable JavaScript to view this website.</noscript>
+
+    <!-- Load jsmediatags (https://www.npmjs.com/package/jsmediatags) -->
+    <script src="scripts/jsmediatags.js" crossorigin></script>
+
+    <!-- Load bluebird (https://www.npmjs.com/package/bluebird) -->
+    <script src="//cdn.jsdelivr.net/npm/bluebird@3.7.1/js/browser/bluebird.min.js"></script>
 
     <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
     <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>

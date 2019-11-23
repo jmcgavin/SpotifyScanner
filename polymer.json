@@ -7,11 +7,12 @@
   "extraDependencies": [
     "manifest.json",
     "node_modules/@webcomponents/webcomponentsjs/**",
+    "scripts/jsmediatags.js",
     "fonts/**"
   ],
   "builds": [
     {
-      "preset": "es5-bundled",
+      "preset": "es6-bundled",
       "addServiceWorker": false
     }
   ],
