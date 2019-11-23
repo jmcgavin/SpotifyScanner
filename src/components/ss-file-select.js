@@ -3,6 +3,7 @@ import { GlobalStyles } from '../styles/global-styles'
 
 import './ss-table'
 import './ss-button'
+import './ss-spinner'
 
 /**
  * Main description for the component goes here.
@@ -23,10 +24,9 @@ export class SSFileSelect extends LitElement {
       css`
         :host {
           display: grid;
-          height: 100%;
           width: 90%;
           margin: 0 auto;
-          grid-template-rows: 20vh 70vh;
+          grid-template-rows: auto auto;
           grid-gap: 16px;
         }
         input {
@@ -52,6 +52,7 @@ export class SSFileSelect extends LitElement {
           margin: 0;
           justify-self: end;
           color: var(--app-light-text);
+          padding-right: 8px;
         }
       `
     ]
@@ -103,20 +104,24 @@ export class SSFileSelect extends LitElement {
   }
 
   _readFiles () {
+    console.time('_readFiles timer')
     if (this._fileSelectInput.files.length) {
       const fileArray = Array.from(this._fileSelectInput.files)
-
       window.Promise.map(fileArray, file => {
         return new Promise((resolve, reject) => {
           window.jsmediatags.read(file, {
-            onSuccess: resolve,
-            onError: error => {
-              console.log(error.message)
+            onSuccess: (file) => {
+              resolve(file)
+            },
+            onError: (error) => {
+              console.log('Error:' + error.message)
               reject(error)
             }
           })
         })
-      }, { concurrency: 5 }).then(tags => {
+      }, {
+        concurrency: 5
+      }).then(tags => {
         const results = tags.map((tag, index) => ({
           id: index + 1,
           title: tag.tags.title || undefined,
@@ -129,6 +134,7 @@ export class SSFileSelect extends LitElement {
           detail: this.tracks
         }))
         this._enableSearchButton()
+        console.timeEnd('_readFiles timer')
       }, error => {
         console.log(error.message)
       })

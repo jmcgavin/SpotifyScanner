@@ -19,7 +19,7 @@ export const GlobalStyles = css`
     --app-light-background: var(--app-white);
     --app-dark-background: var(app-black);
 
-    --app-dark-text: var(--app-black);
     --app-light-text: var(--app-white);
+    --app-dark-text: var(--app-black);
   }
 `
