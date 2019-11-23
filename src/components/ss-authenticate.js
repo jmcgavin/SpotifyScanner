@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 
 import { generateRandomString, getHashParams } from '../../helpers/utils'
+import config from '../../config'
 import './ss-button'
 
 /**
@@ -39,7 +40,7 @@ export class SSAuthenticate extends LitElement {
   }
 
   _authenticate () {
-    const clientId = 'bb4d5dbdf5714a15b1803f54d1a3c1e8' // Your client id
+    const clientId = config.SPOTIFY_CLIENT_ID // Your client id
     const redirectUri = 'http://localhost:8000/callback' // Your redirect uri
     const scope = 'user-read-private playlist-modify-private'
     const state = generateRandomString(16)
