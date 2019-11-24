@@ -13,7 +13,6 @@ import './ss-spinner'
 export class SSFileSelect extends LitElement {
   static get properties () {
     return {
-      tracksAreSelected: { type: Boolean },
       tracks: { type: Array }
     }
   }
@@ -68,7 +67,6 @@ export class SSFileSelect extends LitElement {
 
   constructor () {
     super()
-    this.tracksAreSelected = false
     this.tracks = []
   }
 
@@ -88,7 +86,7 @@ export class SSFileSelect extends LitElement {
           id="fileSelectButton">
         </ss-button>
         <ss-button
-          ?disabled=${!this.tracksAreSelected}
+          ?disabled=${!this.tracks.length}
           .label=${'Search Spotify'}
           .icon=${'search'}
           id="spotifySearchButton">
@@ -98,53 +96,51 @@ export class SSFileSelect extends LitElement {
 
       <ss-table
         .tracks="${this.tracks}"
-        ?tracks-selected=${this.tracksAreSelected}>
+        ?tracks-selected=${this.tracks.length}>
       </ss-table>
     `
   }
 
   _readFiles () {
-    console.time('_readFiles timer')
-    if (this._fileSelectInput.files.length) {
-      const fileArray = Array.from(this._fileSelectInput.files)
-      window.Promise.map(fileArray, file => {
-        return new Promise((resolve, reject) => {
+    const fileArray = Array.from(this._fileSelectInput.files)
+    const promises = []
+
+    if (fileArray.length) {
+      for (const file of fileArray) {
+        promises.push(new Promise((resolve, reject) => {
           window.jsmediatags.read(file, {
-            onSuccess: (file) => {
-              resolve(file)
+            onSuccess: (tags) => {
+              resolve(tags)
             },
             onError: (error) => {
-              console.log('Error:' + error.message)
+              console.log(error.message)
               reject(error)
             }
           })
-        })
-      }, {
-        concurrency: 5
-      }).then(tags => {
-        const results = tags.map((tag, index) => ({
-          id: index + 1,
-          title: tag.tags.title || undefined,
-          artist: tag.tags.artist || undefined,
-          album: tag.tags.album || undefined,
-          year: tag.tags.year || undefined
         }))
-        this.tracks = results
-        this.dispatchEvent(new CustomEvent('tracks-selected', {
-          detail: this.tracks
-        }))
-        this._enableSearchButton()
-        console.timeEnd('_readFiles timer')
-      }, error => {
-        console.log(error.message)
-      })
+      }
+      this._returnTags(promises)
     }
   }
 
-  _enableSearchButton () {
-    if (this.tracks.length) {
-      this.tracksAreSelected = true
-    }
+  _returnTags (promiseArray) {
+    console.time('_readFiles timer')
+    window.Promise.map(promiseArray, (tags, index) => ({
+      id: index + 1,
+      title: tags.tags.title || undefined,
+      artist: tags.tags.artist || undefined,
+      album: tags.tags.album || undefined,
+      year: tags.tags.year || undefined
+    }), {
+      concurrency: 5
+    }).then(tracks => {
+      this.tracks = tracks
+      this.dispatchEvent(new CustomEvent('tracks-selected', {
+        detail: this.tracks
+      }))
+    }, error => {
+      console.log(error.message)
+    })
   }
 
   _handleFileSelect () {
