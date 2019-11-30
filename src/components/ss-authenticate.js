@@ -42,8 +42,7 @@ export class SSAuthenticate extends LitElement {
   _authenticate () {
     const url = 'https://accounts.spotify.com/authorize?response_type=token&'
     const clientId = config.SPOTIFY_CLIENT_ID
-    // const redirectUri = 'http://localhost:8000/callback' // Enable for dev
-    const redirectUri = 'https://jmcgavin.github.io/SpotifyScanner/' // Enable for build
+    const redirectUri = 'http://localhost:8000/callback' // Enable for dev
     const scope = 'user-read-private playlist-modify-private'
     const state = generateRandomString(16)
 
