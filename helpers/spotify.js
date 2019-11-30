@@ -2,9 +2,9 @@ import { createQueryString, getHashParams } from './utils'
 import { ENDPOINTS } from '../constants'
 
 // https://developer.spotify.com/documentation/web-api/reference/search/search/
-export const searchTrack = async function () {
+export const searchTrack = async (...args) => {
   const accessToken = getHashParams().access_token
-  const searchQuery = Array.from(arguments).join(' ')
+  const searchQuery = args.join(' ')
   const queryString = createQueryString({
     q: searchQuery,
     type: 'track',
