@@ -44,8 +44,14 @@
     <!-- Load bluebird (https://www.npmjs.com/package/bluebird) -->
     <script src="//cdn.jsdelivr.net/npm/bluebird@3.7.1/js/browser/bluebird.min.js"></script>
 
+    <script>
+      window.WebComponents = window.WebComponents || {};
+      window.WebComponents.root = 'node_modules/@webcomponents/webcomponentsjs/';
+    </script>
+    
     <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
     <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+
    
     <!-- Built with love using PWA Starter Kit -->
     <script type="module" src="src/index.js" crossorigin></script>
