@@ -4,7 +4,7 @@ import { GlobalStyles } from '../styles/global-styles'
 import { style as materialButtonStyles } from '../styles/mdc-button-css'
 
 /**
- * Main description for the component goes here.
+ * A button based on Google's Material Design.
  * @extends LitElement
  * @prop {Boolean} _session - Is user connected to Spotify?
  */

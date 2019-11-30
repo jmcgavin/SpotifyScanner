@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 
 /**
- * Main description for the component goes here.
+ * A CSS spinner.
  * @extends LitElement
  * @prop {Boolean} _session - Is user connected to Spotify?
  */

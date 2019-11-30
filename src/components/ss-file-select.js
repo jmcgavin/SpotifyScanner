@@ -1,12 +1,15 @@
 import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
+import { removeFromString } from '../../helpers/utils'
+
+import { searchTrack } from '../../helpers/spotify'
 
 import './ss-table'
 import './ss-button'
 import './ss-spinner'
 
 /**
- * Main description for the component goes here.
+ * Handles the file selection portion of the application.
  * @extends LitElement
  * @prop {Boolean} _session - Is user connected to Spotify?
  */
@@ -89,6 +92,7 @@ export class SSFileSelect extends LitElement {
           ?disabled=${!this.tracks.length}
           .label=${'Search Spotify'}
           .icon=${'search'}
+          @click=${this._searchSpotify}
           id="spotifySearchButton">
         </ss-button>
         <h2>Total: ${this.tracks.length}</h2>
@@ -99,6 +103,18 @@ export class SSFileSelect extends LitElement {
         ?tracks-selected=${this.tracks.length}>
       </ss-table>
     `
+  }
+
+  async _searchSpotify () {
+    for (let i = 0; i < this.tracks.length; i++) {
+      const filteredArtist = removeFromString(this.tracks[i].artist,
+        /\sfeaturing|\sfeat\.|\sft\.|\svs\.|\sand|\s&|,/gi
+      )
+      const filteredTitle = removeFromString(this.tracks[i].title,
+        /\(Original\s|\(Extended\s|\sBootleg|\(Pro\s|\(DJ|\sMix\)|\sEdit\)|\(|\)/gi
+      )
+      await searchTrack(filteredTitle, filteredArtist)
+    }
   }
 
   _readFiles () {
@@ -123,9 +139,9 @@ export class SSFileSelect extends LitElement {
     }
   }
 
-  _returnTags (promiseArray) {
-    console.time('_readFiles timer')
-    window.Promise.map(promiseArray, (tags, index) => ({
+  async _returnTags (promiseArray) {
+    // console.time('_readFiles timer')
+    await window.Promise.map(promiseArray, (tags, index) => ({
       id: index + 1,
       title: tags.tags.title || undefined,
       artist: tags.tags.artist || undefined,

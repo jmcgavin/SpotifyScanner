@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 
-import { generateRandomString, getHashParams } from '../../helpers/utils'
+import { createQueryString, generateRandomString, getHashParams } from '../../helpers/utils'
 import config from '../../config'
 import './ss-button'
 
@@ -40,6 +40,7 @@ export class SSAuthenticate extends LitElement {
   }
 
   _authenticate () {
+    const url = 'https://accounts.spotify.com/authorize?response_type=token&'
     const clientId = config.SPOTIFY_CLIENT_ID // Your client id
     const redirectUri = 'http://localhost:8000/callback' // Your redirect uri
     const scope = 'user-read-private playlist-modify-private'
@@ -47,15 +48,15 @@ export class SSAuthenticate extends LitElement {
 
     localStorage.setItem(this._stateKey, state)
 
-    var url = 'https://accounts.spotify.com/authorize'
-    url += '?response_type=token'
-    url += '&client_id=' + encodeURIComponent(clientId)
-    url += '&scope=' + encodeURIComponent(scope)
-    url += '&redirect_uri=' + encodeURIComponent(redirectUri)
-    url += '&state=' + encodeURIComponent(state)
-    // url += '&show_dialog=' + encodeURIComponent('true')
+    const queryString = createQueryString({
+      client_id: clientId,
+      scope,
+      redirect_uri: redirectUri,
+      state
+      // show_dialog: 'true'
+    })
 
-    window.location = url
+    window.location = url + queryString
   }
 
   _verifySession () {

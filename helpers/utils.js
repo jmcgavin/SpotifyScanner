@@ -40,3 +40,25 @@ export const chunkArray = (array, chunkSize) => {
   }
   return chunkedArray
 }
+
+/**
+ * Joins an object's key-value pair(s) to form parameters of a query string
+ * @param {object} params Query parameters
+ * @return {string} Query string
+ */
+export const createQueryString = (params = {}) => {
+  const queryString = Object.keys(params)
+    .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(params[key]))
+    .join('&')
+  return queryString
+}
+
+/**
+ * Removes characters from a string
+ * @param {string} string String to be filtered
+ * @param {regEx} regEx Regular Expression that string will be checked against
+ */
+export const removeFromString = (string, regEx) => {
+  const result = string.replace(regEx, '')
+  return result
+}
