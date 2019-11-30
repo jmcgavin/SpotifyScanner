@@ -56,7 +56,7 @@ export class SpotifyScanner extends LitElement {
   render () {
     return html`
       ${githubRepo}
-      ${this._renderFileSelect()}
+      ${!this.session ? this._renderAuthenticate() : this._renderFileSelect()}
       ${this._authenticationError ? this._renderError() : ''}
     `
   }
@@ -88,7 +88,7 @@ export class SpotifyScanner extends LitElement {
 
   _filesSelectedHandler (e) {
     this.tracks = e.detail
-    console.timeEnd('_readFiles timer')
+    // console.timeEnd('_readFiles timer')
   }
 
   _authenticationApprovedHandler () {

@@ -4,7 +4,7 @@ import { GlobalStyles } from '../styles/global-styles'
 import './ss-button'
 
 /**
- * Main description for the component goes here.
+ * Renders an HTML table element.
  * @extends LitElement
  * @prop {Boolean} _session - Is user connected to Spotify?
  */
@@ -41,10 +41,16 @@ export class SSTable extends LitElement {
           box-sizing: border-box;
         }
 
+        /* Right column align text right */
+        tr th:last-child,
+        tr td:last-child {
+          text-align: right;
+        }
+
         /* First & last column padding */
         tr td:first-child {
           padding-left: 8px;
-          text-align: center;
+          text-align: left;
         }
 
         tr td:last-child {
@@ -68,6 +74,11 @@ export class SSTable extends LitElement {
 
         table tr:last-child {
           border: none;
+        }
+
+        /* No tracks selected */
+        tr td[colspan="5"] {
+          text-align: center;
         }
 
         /* Table border radius */
