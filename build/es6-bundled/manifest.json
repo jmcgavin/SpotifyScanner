@@ -1,0 +1,23 @@
+{
+  "author": "Jordan McGavin",
+  "name": "SpotifyScanner",
+  "short_name": "SpotifyScanner",
+  "description": "Scan your local audio files and add them to Spotify.",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#1DB954",
+  "background_color": "#202030",
+  "icons": [
+    {
+      "src": "images/manifest/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/manifest/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "version": "0.0.0"
+}
