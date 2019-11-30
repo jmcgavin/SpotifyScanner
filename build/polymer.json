@@ -1,0 +1,43 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/index.js",
+  "fragments": [],
+  "sources": [
+    "images/**/*",
+    "index.html",
+    "src/index.js"
+  ],
+  "extraDependencies": [
+    "bower_components/webcomponentsjs/*.js",
+    "manifest.json",
+    "node_modules/@webcomponents/webcomponentsjs/**",
+    "scripts/jsmediatags.js",
+    "fonts/**"
+  ],
+  "builds": [
+    {
+      "name": "es6-bundled",
+      "browserCapabilities": [
+        "es2015"
+      ],
+      "js": {
+        "minify": true,
+        "compile": "es2015",
+        "transformModulesToAmd": true
+      },
+      "css": {
+        "minify": true
+      },
+      "html": {
+        "minify": true
+      },
+      "bundle": true,
+      "addServiceWorker": false,
+      "addPushManifest": false,
+      "preset": "es6-bundled"
+    }
+  ],
+  "npm": true,
+  "componentDir": "node_modules/",
+  "moduleResolution": "node"
+}
