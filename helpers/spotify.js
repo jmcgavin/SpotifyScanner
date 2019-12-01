@@ -25,3 +25,20 @@ export const searchTrack = async (...args) => { // filteredArtist, filteredTitle
   })
   return result
 }
+
+/**
+ * Converts an array of artist object(s) to a string with artist name(s)
+ * @param {array} artists Spotify artists array
+ * @return {string} artist name(s)
+ */
+export const convertSpotifyArtists = artists => {
+  if (artists.length > 1) {
+    const combinedArtists = []
+    for (let i = 0; i < artists.length; i++) {
+      combinedArtists.push(artists[i].name)
+    }
+    return combinedArtists.join(' ')
+  } else {
+    return artists[0].name
+  }
+}

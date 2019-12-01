@@ -1,9 +1,9 @@
 import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 import { removeFromString } from '../../helpers/utils'
-import stringDifferential from '../../scripts/leven'
+import levenshteinDifference from '../../scripts/leven'
 
-import { searchTrack } from '../../helpers/spotify'
+import { searchTrack, convertSpotifyArtists } from '../../helpers/spotify'
 
 import './ss-table'
 import './ss-button'
@@ -120,24 +120,40 @@ export class SSFileSelect extends LitElement {
         normalizeWhitespace: true
       })
       await searchTrack(filteredArtist, filteredTitle).then(result => {
-        this._parseResult(localTrack, result)
+        this._compareResult(localTrack, result)
       })
     }
   }
 
-  _parseResult (localTrack, result) {
+  _compareResult (localTrack, result) {
     // console.log(result)
     // console.log(localTrack)
     if (result.length) {
-      const levenshteinDistance = stringDifferential(
-        `${localTrack.artist.toLowerCase()} ${localTrack.title.toLowerCase()}`,
-        `${result[0].artists[0].name.toLowerCase()} ${result[0].name.toLowerCase()}`
+      const artistOnSpotify = convertSpotifyArtists(result[0].artists)
+
+      const filteredLocalArtist = removeFromString({
+        string: localTrack.artist,
+        regEx: /\sfeaturing|\sfeat|\sft|\svs|\sand|\s&|,|\./gi,
+        normalizeWhitespace: true
+      })
+      const filteredLocalTitle = removeFromString({
+        string: localTrack.title,
+        regEx: /\s\(Original|\s\(Official|\s\(Extended|\s\(Radio|\s\(Pro|\s\(DJ|\sBootleg\)|\sMix\)|\sEdit\)|\(|\)/gi,
+        normalizeWhitespace: true
+      })
+
+      const stringDifference = levenshteinDifference(
+        `${filteredLocalArtist.toLowerCase()} ${filteredLocalTitle.toLowerCase()}`,
+        `${artistOnSpotify.toLowerCase()} ${result[0].name.toLowerCase()}`
       )
-      console.log(`%cFound (${result.length}): %c${result[0].artists[0].name} - ${result[0].name} %c(${levenshteinDistance})`,
-        'color: #1DB954;',
-        'color: default;',
-        `${levenshteinDistance >= 50 ? 'color: #F2545B;' : levenshteinDistance >= 25 ? 'color: #F9CB40;' : 'color: #1DB954;'}`
+
+      console.group(`%cFound (${result.length})`, 'color: #1DB954;')
+      console.log(`Spotify: ${artistOnSpotify} - ${result[0].name}`)
+      console.log(`Local: ${filteredLocalArtist} - ${filteredLocalTitle}`)
+      console.log(`%cDifference: ${stringDifference}`,
+        `${stringDifference >= 50 ? 'color: #F2545B;' : stringDifference >= 25 ? 'color: #F9CB40;' : 'color: #1DB954;'}`
       )
+      console.groupEnd()
     } else {
       console.log(`%cNo results: %c${localTrack.artist} ${localTrack.title}`, 'color: #F2545B;', 'color: default;')
     }
