@@ -58,7 +58,10 @@ export const createQueryString = (params = {}) => {
  * @param {string} string String to be filtered
  * @param {regEx} regEx Regular Expression that string will be checked against
  */
-export const removeFromString = (string, regEx) => {
+export const removeFromString = ({ string, regEx, normalizeWhitespace = false }) => {
   const result = string.replace(regEx, '')
+  if (normalizeWhitespace) {
+    result.replace(/\w([ ]{2,})\w/, '')
+  }
   return result
 }

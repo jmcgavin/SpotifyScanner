@@ -68,7 +68,7 @@ export class SSAuthenticate extends LitElement {
     if (accessToken && (state === null || state !== storedState)) {
       this.dispatchEvent(new CustomEvent('authentication-error'))
     } else {
-      localStorage.removeItem(this._stateKey)
+      // localStorage.removeItem(this._stateKey)
       if (accessToken) {
         this.dispatchEvent(new CustomEvent('authentication-approved'))
       }
