@@ -107,13 +107,17 @@ export class SSFileSelect extends LitElement {
 
   async _searchSpotify () {
     for (let i = 0; i < this.tracks.length; i++) {
-      const filteredArtist = removeFromString(this.tracks[i].artist,
-        /\sfeaturing|\sfeat\.|\sft\.|\svs\.|\sand|\s&|,/gi
-      )
-      const filteredTitle = removeFromString(this.tracks[i].title,
-        /\(Original\s|\(Extended\s|\sBootleg|\(Pro\s|\(DJ|\sMix\)|\sEdit\)|\(|\)/gi
-      )
-      await searchTrack(filteredTitle, filteredArtist)
+      const filteredArtist = removeFromString({
+        string: this.tracks[i].artist,
+        regEx: /\sfeaturing|\sfeat|\sft|\svs|\sand|\s&|,|\./gi,
+        normalizeWhitespace: true
+      })
+      const filteredTitle = removeFromString({
+        string: this.tracks[i].title,
+        regEx: /\s\(Original|\s\(Extended|\s\(Pro|\s\(DJ|Bootleg\)|\sMix\)|\sEdit\)|\(|\)/gi,
+        normalizeWhitespace: true
+      })
+      await searchTrack(filteredArtist, filteredTitle)
     }
   }
 
