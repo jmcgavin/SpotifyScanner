@@ -114,7 +114,7 @@ export class SSFileSelect extends LitElement {
       })
       const filteredTitle = removeFromString({
         string: this.tracks[i].title,
-        regEx: /\s\(Original|\s\(Extended|\s\(Pro|\s\(DJ|Bootleg\)|\sMix\)|\sEdit\)|\(|\)/gi,
+        regEx: /\s\(Original|\s\(Official|\s\(Extended|\s\(Radio|\s\(Pro|\s\(DJ|\sBootleg\)|\sMix\)|\sEdit\)|\(|\)/gi,
         normalizeWhitespace: true
       })
       await searchTrack(filteredArtist, filteredTitle)
