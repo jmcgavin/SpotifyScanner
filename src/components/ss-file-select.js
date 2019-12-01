@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 import { removeFromString } from '../../helpers/utils'
+import stringDifferential from '../../scripts/leven'
 
 import { searchTrack } from '../../helpers/spotify'
 
@@ -107,17 +108,38 @@ export class SSFileSelect extends LitElement {
 
   async _searchSpotify () {
     for (let i = 0; i < this.tracks.length; i++) {
+      const localTrack = this.tracks[i]
       const filteredArtist = removeFromString({
-        string: this.tracks[i].artist,
+        string: localTrack.artist,
         regEx: /\sfeaturing|\sfeat|\sft|\svs|\sand|\s&|,|\./gi,
         normalizeWhitespace: true
       })
       const filteredTitle = removeFromString({
-        string: this.tracks[i].title,
+        string: localTrack.title,
         regEx: /\s\(Original|\s\(Official|\s\(Extended|\s\(Radio|\s\(Pro|\s\(DJ|\sBootleg\)|\sMix\)|\sEdit\)|\(|\)/gi,
         normalizeWhitespace: true
       })
-      await searchTrack(filteredArtist, filteredTitle)
+      await searchTrack(filteredArtist, filteredTitle).then(result => {
+        this._parseResult(localTrack, result)
+      })
+    }
+  }
+
+  _parseResult (localTrack, result) {
+    // console.log(result)
+    // console.log(localTrack)
+    if (result.length) {
+      const levenshteinDistance = stringDifferential(
+        `${localTrack.artist.toLowerCase()} ${localTrack.title.toLowerCase()}`,
+        `${result[0].artists[0].name.toLowerCase()} ${result[0].name.toLowerCase()}`
+      )
+      console.log(`%cFound (${result.length}): %c${result[0].artists[0].name} - ${result[0].name} %c(${levenshteinDistance})`,
+        'color: #1DB954;',
+        'color: default;',
+        `${levenshteinDistance >= 50 ? 'color: #F2545B;' : levenshteinDistance >= 25 ? 'color: #F9CB40;' : 'color: #1DB954;'}`
+      )
+    } else {
+      console.log(`%cNo results: %c${localTrack.artist} ${localTrack.title}`, 'color: #F2545B;', 'color: default;')
     }
   }
 
