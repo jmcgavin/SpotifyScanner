@@ -3,7 +3,7 @@ import { GlobalStyles } from '../styles/global-styles'
 import { removeFromString } from '../../helpers/utils'
 import levenshteinDifference from '../../scripts/leven'
 
-import { searchTrack, convertSpotifyArtists } from '../../helpers/spotify'
+import { searchTrack, spotifyArtistsArrayToString } from '../../helpers/spotify'
 
 import './ss-table'
 import './ss-button'
@@ -120,39 +120,80 @@ export class SSFileSelect extends LitElement {
         normalizeWhitespace: true
       })
       await searchTrack(filteredArtist, filteredTitle).then(result => {
-        this._compareResult(localTrack, result)
+        this._selectSpotifyResult(localTrack, result)
       })
     }
   }
 
-  _compareResult (localTrack, result) {
-    // console.log(result)
-    // console.log(localTrack)
-    if (result.length) {
-      const artistOnSpotify = convertSpotifyArtists(result[0].artists)
+  _findBestResult (localTrack, searchResult) {
+    const similarityArray = []
+    let similarityIndex
 
+    for (let i = 0; i < searchResult.length; i++) {
       const filteredLocalArtist = removeFromString({
-        string: localTrack.artist,
+        string: localTrack.artist || '',
         regEx: /\sfeaturing|\sfeat|\sft|\svs|\sand|\s&|,|\./gi,
         normalizeWhitespace: true
       })
       const filteredLocalTitle = removeFromString({
-        string: localTrack.title,
+        string: localTrack.title || '',
         regEx: /\s\(Original|\s\(Official|\s\(Extended|\s\(Radio|\s\(Pro|\s\(DJ|\sBootleg\)|\sMix\)|\sEdit\)|\(|\)/gi,
         normalizeWhitespace: true
       })
 
-      const stringDifference = levenshteinDifference(
-        `${filteredLocalArtist.toLowerCase()} ${filteredLocalTitle.toLowerCase()}`,
-        `${artistOnSpotify.toLowerCase()} ${result[0].name.toLowerCase()}`
-      )
+      const artistOnSpotify = spotifyArtistsArrayToString(searchResult[i].artists).toLowerCase()
+      const titleOnSpotify = searchResult[i].name.toLowerCase()
+      const albumOnSpotify = searchResult[i].album.name.toLowerCase()
 
-      console.group(`%cFound (${result.length})`, 'color: #1DB954;')
-      console.log(`Spotify: ${artistOnSpotify} - ${result[0].name}`)
-      console.log(`Local: ${filteredLocalArtist} - ${filteredLocalTitle}`)
-      console.log(`%cDifference: ${stringDifference}`,
-        `${stringDifference >= 50 ? 'color: #F2545B;' : stringDifference >= 25 ? 'color: #F9CB40;' : 'color: #1DB954;'}`
+      const localAlbum = localTrack.album ? localTrack.album.toLowerCase() : ''
+
+      const artistDifference = (levenshteinDifference(filteredLocalArtist, artistOnSpotify)) / artistOnSpotify.length
+      const titleDifference = (levenshteinDifference(filteredLocalTitle, titleOnSpotify)) / titleOnSpotify.length
+      const albumDifference = (levenshteinDifference(localAlbum, albumOnSpotify)) / albumOnSpotify.length
+      const spotifyPopularity = searchResult[i].popularity
+
+      similarityIndex = (artistDifference + titleDifference) / 2
+
+      similarityArray.push({
+        originalIndex: i,
+        similarityIndex,
+        albumDifference,
+        spotifyPopularity
+      })
+      similarityArray.sort((a, b) => {
+        if (a.similarityIndex > b.similarityIndex) return 1 // sort lowest to highest similarityIndex 
+        if (a.similarityIndex < b.similarityIndex) return -1
+        if (a.albumDifference > b.albumDifference) return 1 // sort lowest to highest albumDifference 
+        if (a.albumDifference < b.albumDifference) return -1
+        if (a.spotifyPopularity > b.spotifyPopularity) return -1 // sort highest to lowest spotifyPopularity
+        if (a.spotifyPopularity < b.spotifyPopularity) return 1
+      })
+    }
+    // console.log(similarityArray)
+    return {
+      index: similarityArray[0].originalIndex,
+      difference: similarityArray[0].similarityIndex
+    }
+  }
+
+  _selectSpotifyResult (localTrack, searchResult) {
+    // console.log(searchResult)
+    // console.log(localTrack)
+
+    if (searchResult.length) {
+      const result = this._findBestResult(localTrack, searchResult)
+      const topResult = searchResult[result.index]
+      const topRestultArtist = spotifyArtistsArrayToString(topResult.artists)
+      const topResultTitle = topResult.name
+      const topResultDifference = result.difference
+
+      // console.log(searchResult[topResult])
+      console.groupCollapsed(`%cResult found %c(${topResultDifference} difference)`,
+        'color: #1DB954;',
+        `${topResultDifference >= 0.6 ? 'color: #F2545B;' : topResultDifference >= 0.4 ? 'color: #F9CB40;' : 'color: #1DB954;'}`
       )
+      console.log(`Spotify: ${topRestultArtist} - ${topResultTitle}`)
+      console.log(`Local: ${localTrack.artist} - ${localTrack.title}`)
       console.groupEnd()
     } else {
       console.log(`%cNo results: %c${localTrack.artist} ${localTrack.title}`, 'color: #F2545B;', 'color: default;')

@@ -31,7 +31,7 @@ export const searchTrack = async (...args) => { // filteredArtist, filteredTitle
  * @param {array} artists Spotify artists array
  * @return {string} artist name(s)
  */
-export const convertSpotifyArtists = artists => {
+export const spotifyArtistsArrayToString = artists => {
   if (artists.length > 1) {
     const combinedArtists = []
     for (let i = 0; i < artists.length; i++) {
