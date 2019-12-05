@@ -60,9 +60,10 @@ export const createQueryString = (params = {}) => {
  * @return {string} New string
  */
 export const removeFromString = ({ string, regEx, normalizeWhitespace = false }) => {
-  const result = string.replace(regEx, '')
+  const result = string.replace(regEx, ' ')
   if (normalizeWhitespace) {
-    result.replace(/\w([ ]{2,})\w/, '')
+    return result.replace(/  +/g, ' ')
+  } else {
+    return result
   }
-  return result
 }

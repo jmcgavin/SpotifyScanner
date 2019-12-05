@@ -1,7 +1,12 @@
 import { createQueryString, getHashParams } from './utils'
-import { ENDPOINTS } from '../constants'
+import { ENDPOINTS } from '../../constants'
 
-// https://developer.spotify.com/documentation/web-api/reference/search/search/
+/**
+ * Search for a track on Spotify using the /search api
+ * https://developer.spotify.com/documentation/web-api/reference/search/search/
+ * @param  {...any} args Strings to be passed into search query
+ * @return {array} result Array of search results
+ */
 export const searchTrack = async (...args) => { // filteredArtist, filteredTitle
   let result
   const accessToken = getHashParams().access_token
@@ -29,15 +34,16 @@ export const searchTrack = async (...args) => { // filteredArtist, filteredTitle
 /**
  * Converts an array of artist object(s) to a string with artist name(s)
  * @param {array} artists Spotify artists array
+ * @param {string} separator Character(s) that will separate each artist
  * @return {string} artist name(s)
  */
-export const spotifyArtistsArrayToString = artists => {
+export const spotifyArtistsArrayToString = (artists, separator = ' ') => {
   if (artists.length > 1) {
     const combinedArtists = []
     for (let i = 0; i < artists.length; i++) {
       combinedArtists.push(artists[i].name)
     }
-    return combinedArtists.join(' ')
+    return combinedArtists.join(separator)
   } else {
     return artists[0].name
   }
