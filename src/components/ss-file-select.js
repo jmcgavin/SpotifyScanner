@@ -1,8 +1,9 @@
 import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
-import { removeFromString } from '../../helpers/utils'
+import { removeFromString } from '../helpers/utils'
+import levenshteinDifference from '../../scripts/leven'
 
-import { searchTrack } from '../../helpers/spotify'
+import { searchTrack, spotifyArtistsArrayToString } from '../helpers/spotify'
 
 import './ss-table'
 import './ss-button'
@@ -71,6 +72,8 @@ export class SSFileSelect extends LitElement {
   constructor () {
     super()
     this.tracks = []
+    this.resultInnacuracyLowerWarningThreshold = 0.4
+    this.resultInnacuracyUpperWarningThreshold = 0.55
   }
 
   render () {
@@ -107,17 +110,97 @@ export class SSFileSelect extends LitElement {
 
   async _searchSpotify () {
     for (let i = 0; i < this.tracks.length; i++) {
+      const localTrack = this.tracks[i]
       const filteredArtist = removeFromString({
-        string: this.tracks[i].artist,
+        string: localTrack.artist,
         regEx: /\sfeaturing|\sfeat|\sft|\svs|\sand|\s&|,|\./gi,
         normalizeWhitespace: true
       })
       const filteredTitle = removeFromString({
-        string: this.tracks[i].title,
-        regEx: /\s\(Original|\s\(Official|\s\(Extended|\s\(Radio|\s\(Pro|\s\(DJ|\sBootleg\)|\sMix\)|\sEdit\)|\(|\)/gi,
+        string: localTrack.title,
+        regEx: /\s\(.*?\)/g,
         normalizeWhitespace: true
       })
-      await searchTrack(filteredArtist, filteredTitle)
+      const searchTerms = {
+        filteredArtist,
+        filteredTitle
+      }
+
+      await searchTrack(filteredArtist, filteredTitle).then(searchResults => {
+        this._findBestResult(localTrack, searchResults, searchTerms)
+      })
+    }
+  }
+
+  /**
+   * Narrow down a list of search results and select the most likely result.
+   * @param {object} localTrack The track being searched
+   * @param {array} searchResults Search results
+   * @param {object} searchTerms Strings used in the search query
+   */
+  _findBestResult (localTrack, searchResults, searchTerms) {
+    const similarityComparisons = []
+    let averagedDifference
+
+    for (let i = 0; i < searchResults.length; i++) {
+      const artistOnSpotify = spotifyArtistsArrayToString(searchResults[i].artists).toLowerCase()
+      const titleOnSpotify = searchResults[i].name.toLowerCase()
+      const albumOnSpotify = searchResults[i].album.name.toLowerCase()
+
+      const localArtist = localTrack.album ? localTrack.artist.toLowerCase() : ''
+      const localTitle = localTrack.album ? localTrack.title.toLowerCase() : ''
+      const localAlbum = localTrack.album ? localTrack.album.toLowerCase() : ''
+
+      const artistDifference = (levenshteinDifference(localArtist, artistOnSpotify)) / artistOnSpotify.length
+      const titleDifference = (levenshteinDifference(localTitle, titleOnSpotify)) / titleOnSpotify.length
+      const albumDifference = (levenshteinDifference(localAlbum, albumOnSpotify)) / albumOnSpotify.length
+
+      averagedDifference = (artistDifference + titleDifference) / 2
+
+      similarityComparisons.push({
+        originalIndex: i,
+        averagedDifference,
+        albumDifference
+      })
+    }
+    similarityComparisons.sort((a, b) => {
+      return a.averagedDifference - b.averagedDifference || a.albumDifference - b.albumDifference
+    })
+
+    // console.log(similarityComparisons)
+    // console.log(searchResults)
+
+    const topResult = Array.isArray(searchResults) && searchResults.length ? {
+      track: searchResults[similarityComparisons[0].originalIndex],
+      averagedDifference: similarityComparisons[0].averagedDifference
+    } : null
+
+    this._selectTopResult(localTrack, topResult, searchTerms)
+  }
+
+  _selectTopResult (localTrack, topResult, searchTerms) {
+    // console.log(topResult)
+    // console.log(localTrack)
+
+    if (topResult) {
+      const topRestultArtist = spotifyArtistsArrayToString(topResult.track.artists, ', ')
+      const topResultTitle = topResult.track.name
+      const topResultDifference = parseFloat(topResult.averagedDifference.toFixed(3))
+
+      console.groupCollapsed(`%cResult found%c: ${topRestultArtist} - ${topResultTitle} %c(${topResultDifference} difference)`,
+        'color: #1DB954;', 'color: default;',
+      `${topResultDifference >= this.resultInnacuracyUpperWarningThreshold ? 'color: #F2545B;'
+        : topResultDifference >= this.resultInnacuracyLowerWarningThreshold ? 'color: #F9CB40;'
+        : 'color: #1DB954;'}`
+      )
+      console.log(`%cSpotify%c: ${topRestultArtist} - ${topResultTitle}`, 'color: #1DB954;', 'color: default')
+      console.log(`%cLocal%c: ${localTrack.artist} - ${localTrack.title}`, 'color: #30BCED;', 'color: default;')
+      console.log(`%cSearch term%c: ${searchTerms.filteredArtist} ${searchTerms.filteredTitle}`, 'color: #7494EA;', 'color: default;')
+      console.groupEnd()
+    } else {
+      console.groupCollapsed(`%cNo results for%c: ${localTrack.artist} - ${localTrack.title}`, 'color: #F2545B;', 'color: default;')
+      console.log(`%cSearch term%c: ${searchTerms.filteredArtist} ${searchTerms.filteredTitle}`, 'color: #7494EA;', 'color: default;')
+      console.groupEnd()
     }
   }
 

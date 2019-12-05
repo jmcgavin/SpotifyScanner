@@ -6,7 +6,7 @@
 export const generateRandomString = length => {
   let randomString = ''
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  for (var i = 0; i < length; i++) {
+  for (let i = 0; i < length; i++) {
     randomString += possible.charAt(Math.floor(Math.random() * possible.length))
   }
   return randomString
@@ -34,8 +34,8 @@ export const getHashParams = () => {
  * @return {array} Chunked array
  */
 export const chunkArray = (array, chunkSize) => {
-  var chunkedArray = []
-  for (var i = 0; i < array.length; i += chunkSize) {
+  const chunkedArray = []
+  for (let i = 0; i < array.length; i += chunkSize) {
     chunkedArray.push(array.slice(i, i + chunkSize))
   }
   return chunkedArray
@@ -55,13 +55,15 @@ export const createQueryString = (params = {}) => {
 
 /**
  * Removes characters from a string
- * @param {string} string String to be filtered
- * @param {regEx} regEx Regular Expression that string will be checked against
+ * @param {string} string String to be modified
+ * @param {regEx} regEx Regular expression that string will be checked against
+ * @return {string} New string
  */
 export const removeFromString = ({ string, regEx, normalizeWhitespace = false }) => {
-  const result = string.replace(regEx, '')
+  const result = string.replace(regEx, ' ')
   if (normalizeWhitespace) {
-    result.replace(/\w([ ]{2,})\w/, '')
+    return result.replace(/  +/g, ' ')
+  } else {
+    return result
   }
-  return result
 }

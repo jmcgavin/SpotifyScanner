@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 
-import { createQueryString, generateRandomString, getHashParams } from '../../helpers/utils'
+import { createQueryString, generateRandomString, getHashParams } from '../helpers/utils'
 import config from '../../config'
 import './ss-button'
 
