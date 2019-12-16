@@ -20,11 +20,11 @@ export class SSTable extends LitElement {
     return [
       GlobalStyles,
       css`
-        table {
+        table { 
           width: 100%;
           height: fit-content;
           font-family: Roboto, sans-serif;
-          font-size: 14px;
+          font-size: 12px;
           text-align: left;
           color: var(--app-dark-text);
           border-collapse: collapse;
@@ -37,7 +37,7 @@ export class SSTable extends LitElement {
 
         /* Row height */
         tr {
-          height: 50px;
+          height: 40px;
           box-sizing: border-box;
         }
 
@@ -49,17 +49,18 @@ export class SSTable extends LitElement {
 
         /* First & last column padding */
         tr td:first-child {
-          padding-left: 8px;
+          padding-left: 6px;
           text-align: left;
+          color: var(--app-medium-text);
         }
 
         tr td:last-child {
-          padding-right: 8px;
+          padding-right: 6px;
         }
 
         /* Cell padding */
         td, th {
-          padding: 8px;
+          padding: 6px;
         }
 
         /* Table bakground color + border */
@@ -83,7 +84,7 @@ export class SSTable extends LitElement {
 
         /* Table border radius */
         table tr:last-child td:first-child {
-          border-bottom-left-radius: 4px;
+          border-bottom-left-radius: 4px; 
         }
         table tr:last-child td:last-child {
           border-bottom-right-radius: 4px;
@@ -123,10 +124,10 @@ export class SSTable extends LitElement {
             <td colspan="5">No tracks selected</td> <!-- table data cell -->
           </tr>
         ` : ''}
-        
+
         ${this.tracks.map(track => html`
           <tr>
-            <td>${track.id}</td>
+            <td>${track.id + 1}</td>
             <td>${track.title}</td>
             <td>${track.artist}</td>
             <td>${track.album}</td>

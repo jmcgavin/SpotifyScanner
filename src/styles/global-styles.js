@@ -9,9 +9,6 @@ export const GlobalStyles = css`
     --app-purple: #202030;
     --app-red: #F2545B;
     --app-blue: #30BCED;
-    
-    --app-primary: var(--app-green);
-    --app-secondary: var(--app-blue);
 
     /* Other colours */
     --app-success: var(--app-green);
@@ -20,7 +17,7 @@ export const GlobalStyles = css`
 
     /* Borders */
     --app-dark-border: var(--app-black);
-    --app-light-border: rgb(224, 224, 224);
+    --app-light-border: #E0E0E0;
 
     /* Backgrounds */
     --app-light-background: var(--app-white);
@@ -28,6 +25,7 @@ export const GlobalStyles = css`
 
     /* Text */
     --app-light-text: var(--app-white);
+    --app-medium-text: #757575;
     --app-dark-text: var(--app-black);
   }
 `
