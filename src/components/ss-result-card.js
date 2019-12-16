@@ -65,7 +65,7 @@ export class SSResultCard extends LitElement {
           justify-self: end;
         }
         a {
-          color: var(--app-medium-text);
+          color: var(--app-blue);
           text-decoration: none;
         }
         a:hover {
@@ -133,7 +133,9 @@ export class SSResultCard extends LitElement {
         </span>
         <span>Local</span>
         <span>
-          <a href="${this.spotifyResult.external_urls.spotify}" title="Open track in Spotify" target="_blank">Spotify</a>
+          ${this.spotifyResult ? html`
+            <a href="${this.spotifyResult.external_urls.spotify}" title="Open track in Spotify" target="_blank">Spotify</a>
+          ` : 'Spotify'}
         </span>
       </section>
 
