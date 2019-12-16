@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 
-import { createQueryString, generateRandomString, getHashParams } from '../../helpers/utils'
+import { createQueryString, generateRandomString, getHashParams } from '../helpers/utils'
 import config from '../../config'
 import './ss-button'
 
@@ -29,7 +29,7 @@ export class SSAuthenticate extends LitElement {
     return html`
     <ss-button
       .label=${'Log in with Spotify'}
-      .icon=${'person'}
+      .icon=${'lock'}
       @click=${this._authenticate}>
     </ss-button>
     `
@@ -68,7 +68,7 @@ export class SSAuthenticate extends LitElement {
     if (accessToken && (state === null || state !== storedState)) {
       this.dispatchEvent(new CustomEvent('authentication-error'))
     } else {
-      localStorage.removeItem(this._stateKey)
+      // localStorage.removeItem(this._stateKey)
       if (accessToken) {
         this.dispatchEvent(new CustomEvent('authentication-approved'))
       }

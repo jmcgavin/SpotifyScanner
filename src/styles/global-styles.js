@@ -2,6 +2,7 @@ import { css } from 'lit-element'
 
 export const GlobalStyles = css`
   :host {
+    /* Official colours */
     --app-white: #FFFFFA;
     --app-black: #131515;
     --app-green: #1DB954;
@@ -9,17 +10,22 @@ export const GlobalStyles = css`
     --app-red: #F2545B;
     --app-blue: #30BCED;
 
-    --app-dark-border: var(--app-black);
-    --app-light-border: rgb(224, 224, 224);
-
-    --app-primary: var(--app-green);
-    --app-secondary: var(--app-pblue);
+    /* Other colours */
+    --app-success: var(--app-green);
+    --app-warning: #F9CB40;
     --app-error: var(--app-red);
-    
-    --app-light-background: var(--app-white);
-    --app-dark-background: var(app-black);
 
+    /* Borders */
+    --app-dark-border: var(--app-black);
+    --app-light-border: #E0E0E0;
+
+    /* Backgrounds */
+    --app-light-background: var(--app-white);
+    --app-dark-background: var(app-purple);
+
+    /* Text */
     --app-light-text: var(--app-white);
+    --app-medium-text: #757575;
     --app-dark-text: var(--app-black);
   }
 `

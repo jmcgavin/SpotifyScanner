@@ -1,12 +1,13 @@
 import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
-import { removeFromString } from '../../helpers/utils'
+import { removeFromString } from '../helpers/utils'
+import levenshteinDifference from '../../scripts/leven'
 
-import { searchTrack } from '../../helpers/spotify'
+import { searchTrack, spotifyArtistsArrayToString } from '../helpers/spotify'
 
-import './ss-table'
 import './ss-button'
-import './ss-spinner'
+import './ss-results'
+import './ss-table'
 
 /**
  * Handles the file selection portion of the application.
@@ -16,7 +17,8 @@ import './ss-spinner'
 export class SSFileSelect extends LitElement {
   static get properties () {
     return {
-      tracks: { type: Array }
+      tracks: { type: Array },
+      spotifyResults: { type: Array }
     }
   }
 
@@ -71,50 +73,124 @@ export class SSFileSelect extends LitElement {
   constructor () {
     super()
     this.tracks = []
+    this.resultInnacuracyLowerWarningThreshold = 0.4
+    this.resultInnacuracyUpperWarningThreshold = 0.55
+    this.spotifyResults = []
   }
 
   render () {
     return html`
-      <input
-        @change="${this._readFiles}"
-        type="file"
-        accept="audio/*"
-        multiple>
+      ${this.spotifyResults.length ? html`
+        <ss-results
+          .localTracks=${this.tracks}
+          .spotifyResults=${this.spotifyResults}>
+        </ss-results>
+      ` : html`
+        <input
+          @change="${this._readFiles}"
+          type="file"
+          accept="audio/*"
+          multiple>
 
-      <div id="buttonCon">
-        <ss-button
-          .label=${'Select files'}
-          .icon=${'library_music'}
-          @click=${this._handleFileSelect}
-          id="fileSelectButton">
-        </ss-button>
-        <ss-button
-          ?disabled=${!this.tracks.length}
-          .label=${'Search Spotify'}
-          .icon=${'search'}
-          @click=${this._searchSpotify}
-          id="spotifySearchButton">
-        </ss-button>
-        <h2>Total: ${this.tracks.length}</h2>
-      </div>
-
-      <ss-table
-        .tracks="${this.tracks}"
-        ?tracks-selected=${this.tracks.length}>
-      </ss-table>
+        <div id="buttonCon">
+          <ss-button
+            .label=${'Select files'}
+            .icon=${'library_music'}
+            @click=${this._handleFileSelect}
+            id="fileSelectButton">
+          </ss-button>
+          <ss-button
+            ?disabled=${!this.tracks.length}
+            .label=${'Search Spotify'}
+            .icon=${'search'}
+            @click=${this._searchSpotify}
+            id="spotifySearchButton">
+          </ss-button>
+          <h2>Total: ${this.tracks.length}</h2>
+        </div>
+        <ss-table
+          .tracks=${this.tracks}
+          .spotifyResults=${this.spotifyResults}
+          ?tracks-selected=${this.tracks.length}>
+        </ss-table>
+      `}
     `
   }
 
   async _searchSpotify () {
+    const results = []
     for (let i = 0; i < this.tracks.length; i++) {
-      const filteredArtist = removeFromString(this.tracks[i].artist,
-        /\sfeaturing|\sfeat\.|\sft\.|\svs\.|\sand|\s&|,/gi
-      )
-      const filteredTitle = removeFromString(this.tracks[i].title,
-        /\(Original\s|\(Extended\s|\sBootleg|\(Pro\s|\(DJ|\sMix\)|\sEdit\)|\(|\)/gi
-      )
-      await searchTrack(filteredTitle, filteredArtist)
+      const localTrack = this.tracks[i]
+      const filteredArtist = removeFromString({
+        string: localTrack.artist,
+        regEx: /\sfeaturing|\sfeat|\sft|\svs|\sand|\s&|,|\./gi,
+        normalizeWhitespace: true
+      })
+      const filteredTitle = removeFromString({
+        string: localTrack.title,
+        regEx: /\s\(.*?\)/g,
+        normalizeWhitespace: true
+      })
+      const searchTerms = {
+        filteredArtist,
+        filteredTitle
+      }
+
+      await searchTrack(filteredArtist, filteredTitle).then(searchResults => {
+        return this._findBestResult(localTrack, searchResults, searchTerms)
+      }).then(result => {
+        results.push(result || {})
+      })
     }
+    this.spotifyResults = results
+    console.log(this.spotifyResults)
+    // console.log('done')
+  }
+
+  /**
+   * Narrow down a list of search results and select the most likely result.
+   * @param {object} localTrack The track being searched
+   * @param {array} searchResults Search results
+   * @param {object} searchTerms Strings used in the search query
+   */
+  _findBestResult (localTrack, searchResults, searchTerms) {
+    const similarityComparisons = []
+    let averagedDifference
+
+    for (let i = 0; i < searchResults.length; i++) {
+      const artistOnSpotify = spotifyArtistsArrayToString(searchResults[i].artists).toLowerCase()
+      const titleOnSpotify = searchResults[i].name.toLowerCase()
+      const albumOnSpotify = searchResults[i].album.name.toLowerCase()
+
+      const localArtist = localTrack.album ? localTrack.artist.toLowerCase() : ''
+      const localTitle = localTrack.album ? localTrack.title.toLowerCase() : ''
+      const localAlbum = localTrack.album ? localTrack.album.toLowerCase() : ''
+
+      const artistDifference = (levenshteinDifference(localArtist, artistOnSpotify)) / artistOnSpotify.length
+      const titleDifference = (levenshteinDifference(localTitle, titleOnSpotify)) / titleOnSpotify.length
+      const albumDifference = (levenshteinDifference(localAlbum, albumOnSpotify)) / albumOnSpotify.length
+
+      averagedDifference = (artistDifference + titleDifference) / 2
+
+      similarityComparisons.push({
+        originalIndex: i,
+        averagedDifference,
+        albumDifference
+      })
+    }
+    similarityComparisons.sort((a, b) => {
+      return a.averagedDifference - b.averagedDifference || a.albumDifference - b.albumDifference
+    })
+
+    // console.log(similarityComparisons)
+    // console.log(searchResults)
+
+    const result = Array.isArray(searchResults) && searchResults.length ? {
+      track: searchResults[similarityComparisons[0].originalIndex],
+      averagedDifference: similarityComparisons[0].averagedDifference
+    } : null
+
+    return result
   }
 
   _readFiles () {
@@ -142,7 +218,7 @@ export class SSFileSelect extends LitElement {
   async _returnTags (promiseArray) {
     // console.time('_readFiles timer')
     await window.Promise.map(promiseArray, (tags, index) => ({
-      id: index + 1,
+      id: index,
       title: tags.tags.title || undefined,
       artist: tags.tags.artist || undefined,
       album: tags.tags.album || undefined,
