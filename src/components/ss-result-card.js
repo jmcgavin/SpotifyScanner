@@ -26,11 +26,15 @@ export class SSResultCard extends LitElement {
       css`
         :host {
           display: grid;
-          grid-template-columns: 6px max-content repeat(3, 1fr) max-content;
+          max-width: 900px;
+          grid-template-columns: 6px max-content 1fr 0.8fr 1fr max-content;
           border-radius: 3px;
           font-size: 12px;
           overflow: hidden;
           box-shadow: 0px 4px 7px 2px rgba(0,0,0,0.3);
+        }
+        section {
+          overflow: hidden;
         }
         section:nth-child(n+3) {
           border-left: solid 1px var(--app-light-border);
@@ -48,14 +52,15 @@ export class SSResultCard extends LitElement {
           box-sizing: border-box;
           padding: 6px;
           background-color: var(--app-white);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
-        div {
-          display: flex;
-          height: calc(100% - 32px);
-          align-items: center;
-          justify-content: center;
-          color: var(--app-medium-text);
-          background-color: var(--app-white);
+        p {
+          margin: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
         :host(:not([error])) input {
           cursor: pointer;
@@ -131,7 +136,7 @@ export class SSResultCard extends LitElement {
             @change=${this._toggleSelection}/>
           ${this.error ? error : this.warning ? warning : success}
         </span>
-        <span>Local</span>
+        <span><p>Local</p></span>
         <span>
           ${this.spotifyResult ? html`
             <a href="${this.spotifyResult.external_urls.spotify}" title="Open track in Spotify" target="_blank">Spotify</a>
@@ -140,27 +145,27 @@ export class SSResultCard extends LitElement {
       </section>
 
       <section id="track">
-        <span>Track</span>
-        <span>${this.localTrack.title ? this.localTrack.title : ''}</span>
-        <span>${this.spotifyResult ? this.spotifyResult.name : ''}</span>
+        <span><p>Track</p></span>
+        <span><p>${this.localTrack.title ? this.localTrack.title : ''}</p></span>
+        <span><p>${this.spotifyResult ? this.spotifyResult.name : ''}</p></span>
       </section>
 
       <section id="artist">
-        <span>Artist</span>
-        <span>${this.localTrack.artist ? this.localTrack.artist : ''}</span>
-        <span>${this.spotifyResult ? spotifyArtistsArrayToString(this.spotifyResult.artists, ', ') : ''}</span>
+        <span><p>Artist</p></span>
+        <span><p>${this.localTrack.artist ? this.localTrack.artist : ''}</p></span>
+        <span><p>${this.spotifyResult ? spotifyArtistsArrayToString(this.spotifyResult.artists, ', ') : ''}</p></span>
       </section>
 
       <section id="album">
-        <span>Album</span>
-        <span>${this.localTrack.album ? this.localTrack.album : ''}</span>
-        <span>${this.spotifyResult ? this.spotifyResult.album.name : ''}</span>
+        <span><p>Album</p></span>
+        <span><p>${this.localTrack.album ? this.localTrack.album : ''}</p></span>
+        <span><p>${this.spotifyResult ? this.spotifyResult.album.name : ''}</p></span>
       </section>
 
       <section id="year">
-        <span>Year</span>
-        <span>${this.localTrack.year ? this.localTrack.year : ''}</span>
-        <span>${this.spotifyResult ? this.spotifyResult.album.release_date.slice(0, 4) : ''}</span>
+        <span><p>Year</p></span>
+        <span><p>${this.localTrack.year ? this.localTrack.year : ''}</p></span>
+        <span><p>${this.spotifyResult ? this.spotifyResult.album.release_date.slice(0, 4) : ''}</p></span>
       </section>
     `
   }

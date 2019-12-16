@@ -28,10 +28,26 @@ export class SSFileSelect extends LitElement {
       css`
         :host {
           display: grid;
+          height: fit-content;
           width: 90%;
-          margin: 0 auto;
+          max-width: 900px;
+          justify-self: center;
           grid-template-rows: auto auto;
           grid-gap: 16px;
+        }
+        #textContainer {
+          width: 100%;
+          margin-bottom: 60px;
+        }
+        #textContainer h2 {
+          color: var(--app-green);
+          font-weight: bold;
+          font-size: 60px;
+          margin: 0;
+        }
+        #textContainer p {
+          color: var(--app-light-text);
+          margin: 0;
         }
         input {
           display: none;
@@ -80,6 +96,11 @@ export class SSFileSelect extends LitElement {
 
   render () {
     return html`
+      <section id="textContainer">
+        <h2>Select songs</h2>
+        <p>Some text will go here. I'll make sure to write enough that the space gets filled up nicely</p>
+      </section>
+
       ${this.spotifyResults.length ? html`
         <ss-results
           .localTracks=${this.tracks}

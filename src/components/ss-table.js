@@ -49,18 +49,18 @@ export class SSTable extends LitElement {
 
         /* First & last column padding */
         tr td:first-child {
-          padding-left: 6px;
+          padding-left: 12px;
           text-align: left;
           color: var(--app-medium-text);
         }
 
         tr td:last-child {
-          padding-right: 6px;
+          padding-right: 12px;
         }
 
         /* Cell padding */
         td, th {
-          padding: 6px;
+          padding: 6px 12px;
         }
 
         /* Table bakground color + border */
