@@ -29,7 +29,7 @@ export class SSAuthenticate extends LitElement {
     return html`
     <ss-button
       .label=${'Log in with Spotify'}
-      .icon=${'person'}
+      .icon=${'lock'}
       @click=${this._authenticate}>
     </ss-button>
     `

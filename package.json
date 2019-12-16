@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
-    "es-dev-server": "^1.18.5",
+    "es-dev-server": "^1.31.1",
     "polymer-cli": "^1.9.11",
     "snazzy": "^8.0.0",
     "standard": "^14.3.1"
