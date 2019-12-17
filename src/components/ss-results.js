@@ -24,7 +24,7 @@ export class SSResults extends LitElement {
           display: grid;
           width: 100%;
           grid-template-columns: max-content;
-          gap: 12px;
+          gap: 16px;
           justify-self: center;
         }
       `
