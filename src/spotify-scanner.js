@@ -18,11 +18,13 @@ export class SpotifyScanner extends LitElement {
     return [
       GlobalStyles,
       css`
+        :host {
+          display: grid;
+          grid-template-rows: auto 1fr min-content;
+          gap: 20px;
+        }
         ss-authenticate {
-          transform: translate(-50%, -50%);
-          position: absolute;
-          top: 50%;
-          left: 50%;
+          place-self: center;
         }
         #authenticationError {
           position: absolute;
@@ -34,6 +36,14 @@ export class SpotifyScanner extends LitElement {
           text-align: center;
           color: var(--app-light-text);
           background-color: var(--app-error);
+        }
+        footer {
+          font-familiy: Roboto, sans-serif;
+          width: 100%;
+          font-size: 12px;
+          text-align: center;
+          color: var(--app-light-text);
+          padding-bottom: 20px;
         }
       `
     ]
@@ -58,6 +68,9 @@ export class SpotifyScanner extends LitElement {
       ${githubRepo}
       ${!this.session ? this._renderAuthenticate() : this._renderFileSelect()}
       ${this._authenticationError ? this._renderError() : ''}
+      <footer>
+        Made with &hearts; by Jordan
+      </footer>
     `
   }
 

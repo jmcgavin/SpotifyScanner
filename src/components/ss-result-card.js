@@ -1,6 +1,5 @@
 import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
-import { success, error, openNewWindow, warning } from './ss-icons'
 import { spotifyArtistsArrayToString } from '../helpers/spotify'
 
 import './ss-checkbox'
@@ -26,39 +25,78 @@ export class SSResultCard extends LitElement {
       css`
         :host {
           display: grid;
-          grid-template-columns: 6px max-content repeat(3, 1fr) max-content;
+          max-width: 900px;
+          grid-template-columns: 6px max-content 1fr 0.8fr 1fr max-content;
           border-radius: 3px;
           font-size: 12px;
           overflow: hidden;
           box-shadow: 0px 4px 7px 2px rgba(0,0,0,0.3);
-        }
-        section:nth-child(n+3) {
-          border-left: solid 1px var(--app-light-border);
-        }
-        section span:first-child {
-          color: var(--app-medium-text);
-        }
-        section span:not(:last-child) {
-          border-bottom: solid 1px var(--app-light-border);
         }
         span {
           display: flex;
           align-items: center;
           height: 32px;
           box-sizing: border-box;
-          padding: 6px;
+          padding: 0 6px;
           background-color: var(--app-white);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
-        div {
-          display: flex;
-          height: calc(100% - 32px);
-          align-items: center;
-          justify-content: center;
-          color: var(--app-medium-text);
-          background-color: var(--app-white);
+        ss-checkbox {
+          place-self: center;
+        }
+
+        /* Borders */
+        span:not(#status):not(#firstCell):not(.lastRow) {
+          border-bottom: solid 1px var(--app-light-border);
+        }
+        span:not(#status):not(#firstCell):not(.lastCol) {
+          border-right: solid 1px var(--app-light-border);
+        }
+
+        /* Status colours */
+        #status {
+          grid-row-start: 1;
+          grid-row-end: 4;
+          height: 100%;
+          box-sizing: border-box;
+        }
+        #status, #firstCell {
+          background-color: var(--app-green);
+        }
+        :host([warning]) #status,
+        :host([warning]) #firstCell {
+          background-color: var(--app-warning);
+        }
+        :host([error]) #status,
+        :host([error]) #firstCell {
+          background-color: var(--app-red);
         }
         :host(:not([error])) input {
           cursor: pointer;
+        }
+
+        #firstCell {
+          padding: 0 6px 0 0;
+          display: grid;
+        }
+        .header {
+          color: var(--app-medium-text);
+        }
+        .lastCol {
+          justify-content: flex-end;
+        }
+        #noResult {
+          color: var(--app-medium-text);
+          grid-column-start: 3;
+          grid-column-end: 7;
+        }
+        p {
+          margin: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
         svg {
           width: 20px;
@@ -71,45 +109,8 @@ export class SSResultCard extends LitElement {
         a:hover {
           text-decoration: underline;
         }
-        #status {
-          background-color: var(--app-green);
-        }
-        #labels span:first-child {
-          background-color: var(--app-green);
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          padding: 0 6px 0 0;
-        }
-        #labels span:first-child input {
-          margin: 0;
-        }
-        :host([warning]) #status,
-        :host([warning]) #labels span:first-child {
-          background-color: var(--app-warning);
-        }
-        :host([error]) #status,
-        :host([error]) #labels span:first-child {
-          background-color: var(--app-red);
-        }
-        #labels {
-          color: var(--app-medium-text);
-        }
-        #labels span:first-child {
-          padding-left: 0;
-        }
-        #labels span:not(:first-child),
-        #labels span:not(:last-child) {
-          border-bottom: solid 1px var(--app-light-border);
-        }
-        #year {
-          text-alight: right;
-        }
       `
     ]
-  }
-
-  get _checkbox () {
-    return this.renderRoot.querySelector('input')
   }
 
   constructor () {
@@ -120,48 +121,42 @@ export class SSResultCard extends LitElement {
 
   render () {
     return html`
-      <section id="status"></section>
+      <span id="status"></span>
 
-      <section id="labels">
-        <span>
-          <input
-            type="checkbox"
-            ?disabled=${this.error}
-            ?checked="${!this.error & !this.warning}"
-            @change=${this._toggleSelection}/>
-          ${this.error ? error : this.warning ? warning : success}
-        </span>
-        <span>Local</span>
-        <span>
-          ${this.spotifyResult ? html`
-            <a href="${this.spotifyResult.external_urls.spotify}" title="Open track in Spotify" target="_blank">Spotify</a>
-          ` : 'Spotify'}
-        </span>
-      </section>
+      <span id="firstCell">
+        <ss-checkbox
+          ?disabled=${this.error}
+          ?checked="${!this.error & !this.warning}"
+          @change=${this._toggleSelection}>
+        </ss-checkbox>
+      </span>
+      <span class="header">Title</span>
+      <span class="header">Artist</span>
+      <span class="header">Album</span>
+      <span class="header lastCol"><p>Year</p></span>
 
-      <section id="track">
-        <span>Track</span>
-        <span>${this.localTrack.title ? this.localTrack.title : ''}</span>
-        <span>${this.spotifyResult ? this.spotifyResult.name : ''}</span>
-      </section>
+      <span><p>Local</p></span>
+      <span><p>${this.localTrack.title ? this.localTrack.title : ''}</p></span>
+      <span><p>${this.localTrack.artist ? this.localTrack.artist : ''}</p></span>
+      <span><p>${this.localTrack.album ? this.localTrack.album : ''}</p></span>
+      <span class="lastCol"><p>${this.localTrack.year ? this.localTrack.year : ''}</p></span>
 
-      <section id="artist">
-        <span>Artist</span>
-        <span>${this.localTrack.artist ? this.localTrack.artist : ''}</span>
-        <span>${this.spotifyResult ? spotifyArtistsArrayToString(this.spotifyResult.artists, ', ') : ''}</span>
-      </section>
 
-      <section id="album">
-        <span>Album</span>
-        <span>${this.localTrack.album ? this.localTrack.album : ''}</span>
-        <span>${this.spotifyResult ? this.spotifyResult.album.name : ''}</span>
-      </section>
+      <span class="lastRow">
+        ${this.spotifyResult ? html`
+          <a href="${this.spotifyResult.external_urls.spotify}" title="Open track in Spotify" target="_blank">Spotify</a>
+        ` : 'Spotify'}
+      </span>
 
-      <section id="year">
-        <span>Year</span>
-        <span>${this.localTrack.year ? this.localTrack.year : ''}</span>
-        <span>${this.spotifyResult ? this.spotifyResult.album.release_date.slice(0, 4) : ''}</span>
-      </section>
+      ${this.spotifyResult ? html`
+        <span class="lastRow"><p>${this.spotifyResult ? this.spotifyResult.name : ''}</p></span>
+        <span class="lastRow"><p>${this.spotifyResult ? spotifyArtistsArrayToString(this.spotifyResult.artists, ', ') : ''}</p></span>
+        <span class="lastRow"><p>${this.spotifyResult ? this.spotifyResult.album.name : ''}</p></span>
+        <span class="lastRow lastCol"><p>${this.spotifyResult ? this.spotifyResult.album.release_date.slice(0, 4) : ''}</p></span>
+      ` : html`
+        <span id="noResult">No result</span>
+      `}
+
     `
   }
 

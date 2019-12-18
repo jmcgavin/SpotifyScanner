@@ -22,13 +22,10 @@ export class SSResults extends LitElement {
       css`
         :host {
           display: grid;
-          grid-template-columns: max-content;
-          gap: 20px;
-          justify-self: center;
-        }
-        div {
-          background-colour: tomato;
           width: 100%;
+          grid-template-columns: max-content;
+          gap: 16px;
+          justify-self: center;
         }
       `
     ]
