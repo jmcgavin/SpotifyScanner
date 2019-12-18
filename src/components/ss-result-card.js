@@ -1,6 +1,5 @@
 import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
-import { success, error, openNewWindow, warning } from './ss-icons'
 import { spotifyArtistsArrayToString } from '../helpers/spotify'
 
 import './ss-checkbox'
@@ -44,6 +43,9 @@ export class SSResultCard extends LitElement {
           text-overflow: ellipsis;
           white-space: nowrap;
         }
+        ss-checkbox {
+          place-self: center;
+        }
 
         /* Borders */
         span:not(#status):not(#firstCell):not(.lastRow) {
@@ -78,7 +80,6 @@ export class SSResultCard extends LitElement {
         #firstCell {
           padding: 0 6px 0 0;
           display: grid;
-          grid-template-columns: auto auto;
         }
         .header {
           color: var(--app-medium-text);
@@ -112,10 +113,6 @@ export class SSResultCard extends LitElement {
     ]
   }
 
-  get _checkbox () {
-    return this.renderRoot.querySelector('input')
-  }
-
   constructor () {
     super()
     this.localTrack = {}
@@ -127,12 +124,11 @@ export class SSResultCard extends LitElement {
       <span id="status"></span>
 
       <span id="firstCell">
-        <input
-          type="checkbox"
+        <ss-checkbox
           ?disabled=${this.error}
           ?checked="${!this.error & !this.warning}"
-          @change=${this._toggleSelection}/>
-        ${this.error ? error : this.warning ? warning : success}
+          @change=${this._toggleSelection}>
+        </ss-checkbox>
       </span>
       <span class="header">Title</span>
       <span class="header">Artist</span>
