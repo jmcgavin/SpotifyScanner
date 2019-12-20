@@ -24,8 +24,9 @@ export class SSResultCard extends LitElement {
       GlobalStyles,
       css`
         :host {
+          width: 100%;
+          margin-bottom: 16px;
           display: grid;
-          max-width: 900px;
           grid-template-columns: 6px max-content 1fr 0.8fr 1fr max-content;
           border-radius: 3px;
           font-size: 12px;

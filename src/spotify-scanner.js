@@ -20,8 +20,10 @@ export class SpotifyScanner extends LitElement {
       css`
         :host {
           display: grid;
-          grid-template-rows: auto 1fr min-content;
-          gap: 20px;
+          grid-template-rows: min-content 1fr 40px;
+        }
+        #gitHub {
+          place-self: end;
         }
         ss-authenticate {
           place-self: center;
@@ -41,9 +43,11 @@ export class SpotifyScanner extends LitElement {
           font-familiy: Roboto, sans-serif;
           width: 100%;
           font-size: 12px;
-          text-align: center;
           color: var(--app-light-text);
-          padding-bottom: 20px;
+          place-content: center;
+          place-items: center;
+          display: flex;
+          height: 100%;
         }
       `
     ]
@@ -65,7 +69,7 @@ export class SpotifyScanner extends LitElement {
   // ${this._renderFileSelect()}
   render () {
     return html`
-      ${githubRepo}
+      <span id="gitHub">${githubRepo}</span>
       ${!this.session ? this._renderAuthenticate() : this._renderFileSelect()}
       ${this._authenticationError ? this._renderError() : ''}
       <footer>

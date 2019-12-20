@@ -113,7 +113,7 @@ export class SSFileSelect extends LitElement {
           accept="audio/*"
           multiple>
 
-        <div id="buttonCon">
+        <section id="buttonCon">
           <ss-button
             .label=${'Select files'}
             .icon=${'library_music'}
@@ -127,8 +127,8 @@ export class SSFileSelect extends LitElement {
             @click=${this._searchSpotify}
             id="spotifySearchButton">
           </ss-button>
-          <h2>Total: ${this.tracks.length}</h2>
-        </div>
+          <h2>${this.tracks.length}</h2>
+        </section>
         <ss-table
           .tracks=${this.tracks}
           .spotifyResults=${this.spotifyResults}
