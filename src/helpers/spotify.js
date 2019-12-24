@@ -18,17 +18,21 @@ export const searchTrack = async (...args) => { // filteredArtist, filteredTitle
     market: 'from_token'
   })
 
-  await fetch(`${ENDPOINTS.search}?${queryString}`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${accessToken}`
-    }
-  }).then(response => {
-    return response.json()
-  }).then(data => {
-    result = data.tracks.items
-  })
-  return result
+  try {
+    await fetch(`${ENDPOINTS.search}?${queryString}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    }).then(response => {
+      return response.json()
+    }).then(data => {
+      result = data.tracks.items
+    })
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
 }
 
 /**
