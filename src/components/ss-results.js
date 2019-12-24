@@ -64,8 +64,8 @@ export class SSResults extends LitElement {
     return html`
       <div id="buttonCon">
         <ss-button
-          .label=${'Select files'}
-          .icon=${'library_music'}
+          .label=${'Add to Spotify'}
+          .icon=${'library_add'}
           @click=${this._handleFileSelect}
           id="fileSelectButton">
         </ss-button>
