@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 
 import './ss-result-card'
+import './ss-dropdown'
 
 /**
  * Handles the file selection portion of the application.
@@ -63,6 +64,7 @@ export class SSResults extends LitElement {
   render () {
     return html`
       <div id="buttonCon">
+        <ss-dropdown></ss-dropdown>
         <ss-button
           .label=${'Add to Spotify'}
           .icon=${'library_add'}
