@@ -1,3 +1,5 @@
 export const ENDPOINTS = {
-  search: 'https://api.spotify.com/v1/search'
+  playlists: 'https://api.spotify.com/v1/me/playlists',
+  search: 'https://api.spotify.com/v1/search',
+  user: 'https://api.spotify.com/v1/me'
 }

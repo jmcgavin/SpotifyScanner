@@ -2,7 +2,7 @@ import { createQueryString, getHashParams } from './utils'
 import { ENDPOINTS } from '../../constants'
 
 /**
- * Search for a track on Spotify using the /search api
+ * Search for a track on Spotify
  * https://developer.spotify.com/documentation/web-api/reference/search/search/
  * @param  {...any} args Strings to be passed into search query
  * @return {array} result Array of search results
@@ -18,17 +18,73 @@ export const searchTrack = async (...args) => { // filteredArtist, filteredTitle
     market: 'from_token'
   })
 
-  await fetch(`${ENDPOINTS.search}?${queryString}`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${accessToken}`
-    }
-  }).then(response => {
-    return response.json()
-  }).then(data => {
-    result = data.tracks.items
-  })
-  return result
+  try {
+    await fetch(`${ENDPOINTS.search}?${queryString}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    }).then(response => {
+      return response.json()
+    }).then(data => {
+      result = data.tracks.items
+    })
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+/**
+ * Get the user's Spotify playlists
+ * https://developer.spotify.com/documentation/web-api/reference/playlists/
+ * @return {array} result Array of user's playlists
+ */
+export const getPlaylists = async () => {
+  let result
+  const accessToken = getHashParams().access_token
+
+  try {
+    await fetch(`${ENDPOINTS.playlists}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    }).then(response => {
+      return response.json()
+    }).then(data => {
+      result = data.items
+    })
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+/**
+ * Get the active user
+ * https://developer.spotify.com/documentation/web-api/reference/users-profile/get-current-users-profile/
+ * @return {object} result User object
+ */
+export const getUser = async () => {
+  let result
+  const accessToken = getHashParams().access_token
+
+  try {
+    await fetch(`${ENDPOINTS.user}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    }).then(response => {
+      return response.json()
+    }).then(data => {
+      result = data
+    })
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
 }
 
 /**

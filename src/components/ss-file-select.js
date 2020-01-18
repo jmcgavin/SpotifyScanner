@@ -7,6 +7,7 @@ import { searchTrack, spotifyArtistsArrayToString } from '../helpers/spotify'
 
 import './ss-button'
 import './ss-results'
+import './ss-spinner'
 import './ss-table'
 
 /**
@@ -17,8 +18,9 @@ import './ss-table'
 export class SSFileSelect extends LitElement {
   static get properties () {
     return {
-      tracks: { type: Array },
-      spotifyResults: { type: Array }
+      loading: { type: Boolean },
+      spotifyResults: { type: Array },
+      tracks: { type: Array }
     }
   }
 
@@ -28,10 +30,26 @@ export class SSFileSelect extends LitElement {
       css`
         :host {
           display: grid;
+          height: fit-content;
           width: 90%;
-          margin: 0 auto;
+          max-width: 900px;
+          justify-self: center;
           grid-template-rows: auto auto;
           grid-gap: 16px;
+        }
+        #textContainer {
+          width: 100%;
+          margin-bottom: 60px;
+        }
+        #textContainer h2 {
+          color: var(--app-green);
+          font-weight: bold;
+          font-size: 60px;
+          margin: 0;
+        }
+        #textContainer p {
+          color: var(--app-light-text);
+          margin: 0;
         }
         input {
           display: none;
@@ -72,15 +90,26 @@ export class SSFileSelect extends LitElement {
 
   constructor () {
     super()
-    this.tracks = []
-    this.resultInnacuracyLowerWarningThreshold = 0.4
-    this.resultInnacuracyUpperWarningThreshold = 0.55
+    this.loading = false
     this.spotifyResults = []
+    this.tracks = []
+  }
+
+  renderLoading () {
+    return html`
+      <ss-spinner></ss-spinner>
+    `
   }
 
   render () {
     return html`
-      ${this.spotifyResults.length ? html`
+      <section id="textContainer">
+        <h2>Select songs</h2>
+        <p>Some text will go here. I'll make sure to write enough that the space gets filled up nicely</p>
+      </section>
+
+      ${this.loading ? this.renderLoading()
+      : this.spotifyResults.length ? html`
         <ss-results
           .localTracks=${this.tracks}
           .spotifyResults=${this.spotifyResults}>
@@ -92,7 +121,7 @@ export class SSFileSelect extends LitElement {
           accept="audio/*"
           multiple>
 
-        <div id="buttonCon">
+        <section id="buttonCon">
           <ss-button
             .label=${'Select files'}
             .icon=${'library_music'}
@@ -106,8 +135,8 @@ export class SSFileSelect extends LitElement {
             @click=${this._searchSpotify}
             id="spotifySearchButton">
           </ss-button>
-          <h2>Total: ${this.tracks.length}</h2>
-        </div>
+          <h2>${this.tracks.length}</h2>
+        </section>
         <ss-table
           .tracks=${this.tracks}
           .spotifyResults=${this.spotifyResults}
@@ -118,6 +147,7 @@ export class SSFileSelect extends LitElement {
   }
 
   async _searchSpotify () {
+    this.loading = true
     const results = []
     for (let i = 0; i < this.tracks.length; i++) {
       const localTrack = this.tracks[i]
@@ -144,6 +174,7 @@ export class SSFileSelect extends LitElement {
     }
     this.spotifyResults = results
     console.log(this.spotifyResults)
+    this.loading = false
     // console.log('done')
   }
 

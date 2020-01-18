@@ -3,6 +3,7 @@ import { GlobalStyles } from '../styles/global-styles'
 
 import { createQueryString, generateRandomString, getHashParams } from '../helpers/utils'
 import config from '../../config'
+
 import './ss-button'
 
 /**
@@ -43,7 +44,7 @@ export class SSAuthenticate extends LitElement {
     const url = 'https://accounts.spotify.com/authorize?response_type=token&'
     const clientId = config.SPOTIFY_CLIENT_ID
     const redirectUri = 'http://localhost:8000/callback' // Enable for dev
-    const scope = 'user-read-private playlist-modify-private'
+    const scope = 'user-read-private playlist-read-collaborative playlist-read-private playlist-modify-private playlist-modify-public'
     const state = generateRandomString(16)
 
     localStorage.setItem(this._stateKey, state)
