@@ -2,7 +2,7 @@ import { LitElement, html, css } from 'lit-element'
 import { GlobalStyles } from '../styles/global-styles'
 
 /**
- * `ss-dropdown` renders a dropdown menu containing a vertical list of items.
+ * `hc-menu` renders a dropdown menu containing a vertical list of items.
  *
  * @memberOf components
  * @extends LitElement
@@ -23,6 +23,8 @@ class SSDropdown extends LitElement {
       css`
         :host {
           user-select: none;
+          position: relative;
+          width: 220px;
         }
         :host([opened]) .trigger {
           pointer-events: none;
@@ -34,41 +36,29 @@ class SSDropdown extends LitElement {
           position: absolute;
           min-width: 100%;
           max-width: fit-content;
-          top: 0;
+          top: 40px;
           z-index: 1;
-          box-shadow: none;
+          box-shadow: 0 4px 8px 0 rgba(0,0,0,0.24), 0 0 4px 0 rgba(0, 0, 0, 0.16);
           opacity: 0;
-          transition: opacity .2s ease;
+          transition: opacity 200ms ease;
         }
         .menuContent {
+          max-height: 300px;
+          overflow: auto;
           display: flex;
           flex-direction: column;
-          padding: 14px 16px;
+          padding: 8px;
           border-radius: 3px;
-          background-color: green;
+          background-color: var(--app-light-background);
         }
         .menuContent[hidden] {
           display: none;
         }
-        .menuContent::after {
-          width: 16px;
-          height: 16px;
-          display: block;
-          transform: rotate(45deg);
-          box-shadow: none;
-          background-color: blue;
-          content: '';
-          position: absolute;
-          top: -8px;
-          left: 24px;
-          z-index: -1;
-        }
         slot[name="item"]::slotted(button) {
           font-size: 14px;
-          font-weight: bold;
-          height: 40px;
+          height: 36px;
           font-family: Roboto, sans-serif;
-          color: pink;
+          color: var(--app-dark-text);
           border: none;
           outline: none;
           background-color: transparent;
@@ -78,19 +68,16 @@ class SSDropdown extends LitElement {
           padding: 8px;
           display: flex;
           align-items: center;
-          transition: background-color .2s ease;
+          transition: background-color 200ms ease;
         }
 
         slot[name="item"]::slotted(button:not([selected]):hover),
         slot[name="item"]::slotted(button:not([selected]):focus) {
-          background-color: orange;
+          background-color: var(--app-hover);
         }
         slot[name="item"]::slotted([selected]) {
-          background-color: var(--app-primary-color);
-          color: tomato;
-        }
-        slot[name="item"]::slotted([selected]:focus) {
-          background-color: salmon;
+          background-color: var(--app-blue);
+          color: var(--app-light-text);
         }
       `
     ]

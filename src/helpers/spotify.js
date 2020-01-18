@@ -62,6 +62,32 @@ export const getPlaylists = async () => {
 }
 
 /**
+ * Get the active user
+ * https://developer.spotify.com/documentation/web-api/reference/users-profile/get-current-users-profile/
+ * @return {object} result User object
+ */
+export const getUser = async () => {
+  let result
+  const accessToken = getHashParams().access_token
+
+  try {
+    await fetch(`${ENDPOINTS.user}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    }).then(response => {
+      return response.json()
+    }).then(data => {
+      result = data
+    })
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+/**
  * Converts an array of artist object(s) to a string with artist name(s)
  * @param {array} artists Spotify artists array
  * @param {string} separator Character(s) that will separate each artist
