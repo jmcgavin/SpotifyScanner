@@ -10,7 +10,7 @@ export const GlobalStyles = css`
     --app-red: #F2545B;
     --app-blue: #30BCED;
 
-    /* Other colours */
+    /* Status */
     --app-success: var(--app-green);
     --app-warning: #F9CB40;
     --app-error: var(--app-red);
@@ -23,9 +23,16 @@ export const GlobalStyles = css`
     --app-light-background: var(--app-white);
     --app-dark-background: var(app-purple);
 
+    /* States */
+    --app-hover: #EFEFEF;
+    --app-active: #E0E0E0;
+
     /* Text */
     --app-light-text: var(--app-white);
     --app-medium-text: #757575;
     --app-dark-text: var(--app-black);
+    
+    /* Other */
+    --app-button-height: 36px;
   }
 `

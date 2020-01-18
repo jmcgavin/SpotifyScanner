@@ -12,16 +12,18 @@ export class SSButton extends LitElement {
   static get properties () {
     return {
       disabled: { type: Boolean, attribute: 'disabled', reflect: true },
+      icon: { type: String, attribute: 'icon', reflect: true },
       label: { type: String, attribute: 'label', reflect: true },
-      icon: { type: String, attribute: 'icon', reflect: true }
+      trailingIcon: { type: String, attribute: 'tralingIcon', reflect: true }
     }
   }
 
   constructor () {
     super()
     this.disabled = false
-    this.label = ''
     this.icon = ''
+    this.label = ''
+    this.trailingIcon = ''
   }
 
   static get styles () {
@@ -49,7 +51,14 @@ export class SSButton extends LitElement {
             ${this.icon}
           </i>
         ` : ''}
+        
         <span class="mdc-button__label">${this.label}</span>
+
+        ${this.trailingIcon.length ? html`
+          <i class="material-icons mdc-button__icon" aria-hidden="true">
+            ${this.trailingIcon}
+          </i>
+        ` : ''}
       </button>
     `
   }
